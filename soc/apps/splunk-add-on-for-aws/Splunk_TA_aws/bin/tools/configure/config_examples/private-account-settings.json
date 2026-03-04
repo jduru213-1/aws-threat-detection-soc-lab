@@ -1,0 +1,15 @@
+[
+  {
+      "stanzas":[
+          {
+            "name": "aws_account_2",
+            "key_id": "ABCDEFGHIJKLMNOPQRST",
+            "secret_key": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmn",
+            "category": "1",
+            "sts_region": "ap-south-1",
+            "private_endpoint_enabled": "0",
+            "sts_private_endpoint_url": "https://vpce-1234abcdefg4566-bvbqlnmh.sts.us-east-1.vpce.amazonaws.com"
+          }
+      ]
+  }
+]

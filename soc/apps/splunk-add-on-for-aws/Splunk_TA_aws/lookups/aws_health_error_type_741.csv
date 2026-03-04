@@ -1,0 +1,45 @@
+ErrorCode,ErrorDetail,sourcetype,ErrorType
+SSLError,*,*,network
+TimeoutError,*,*,network
+ReadTimeoutError,*,*,network
+EndpointConnectionError,*,*,network
+ConnectionError,"HTTPSConnectionPool*ProxyError*",*,network
+ConnectTimeout,"HTTPSConnectionPool*ConnectTimeoutError*",*,network
+WindowsError,"[Error 87] The parameter is incorrect",*,configuration
+"*ClientError*","*AccessDenied*",*,authentication
+"*AccessDeniedException*","*AccessDenied*",*,authentication
+"*ClientError*","*(403)*HeadObject*Forbidden*",*,authentication
+"*ClientError*","*UnauthorizedOperation*",*,authentication
+"*AWSAccountError*","*account not found*",*,configuration
+"*AWSIAMRoleError*","*iam role not found*",*,configuration
+"*HTTPError*","HTTP 500*REST Error [400]*",*,configuration
+"*ClientError*","*Throttling*",*,throttling
+"*ClientError*","*Throttle*",*,throttling
+"*ClientError*","*LimitExceeded*",*,throttling
+"*ClientError*","*TooManyRequestsException*",*,throttling
+"*ClientError*","*ProvisionedThroughputExceededException*",*,throttling
+"*ClientError*","*TransactionInProgressException*",*,throttling
+"*ClientError*","*SlowDown*",*,throttling
+"*BotoServerError*","*RequestLimitExceeded*",*,throttling
+"*ClientError*","*InvalidClientTokenId*The security token included in the request is invalid*",*,configuration
+"*ClientError*","*InvalidToken*The provided token is malformed or otherwise invalid*",*,configuration
+
+*,"*Dead letter queue not found*","aws:sqsbaseds3:log",configuration
+"*InvalidObjectState*","*An error occurred (InvalidObjectState) when calling the GetObject operation: The operation is not valid for the object's storage class*","aws:sqsbaseds3:log",configuration
+"*QueueDoesNotExist*","*(AWS.SimpleQueueService.NonExistentQueue)*","aws:sqsbaseds3:log",configuration
+"*ResponseStreamingError*","*ConnectionResetError*Connection reset by peer*","aws:sqsbaseds3:log",network
+KeyError,"*configurationItems*","aws:sqsbaseds3:log",configuration
+"*SSLError*","SSL validation failed for*hostname*doesn't match either of*","aws:sqsbaseds3:log",configuration
+
+"*ConfigurationError*","*Service is unsupported*","aws:metadata:log",configuration
+
+"*S3ResponseError*","*S3ResponseError: 404 Not Found*","aws:s3:log",configuration
+"*ConfigurationError*",*,"aws:s3:log",configuration
+"*S3ResponseError*","*S3ResponseError: 403 Forbidden*","aws:s3:log",authentication
+
+"*UnsupportedLogType*",*,"aws:logs:log",configuration
+"*ClientError*","*(NoSuchBucket)*","aws:logs:log",configuration
+"*ConfigurationError*",*,"aws:cloudwatch:log",configuration
+
+*,"*Invalid datetime=*expected format*","aws:cloudwatchlogs:log",configuration
+*,"*Failed to get conf*status=404*Not Found*Could not find object id*","aws:cloudwatchlogs:log",configuration

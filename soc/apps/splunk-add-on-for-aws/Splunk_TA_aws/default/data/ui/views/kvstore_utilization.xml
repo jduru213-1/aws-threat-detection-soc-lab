@@ -1,0 +1,112 @@
+<!--
+// jscpd:ignore-start
+-->
+<form version="1.1" script="MultiSelectHelper.js">
+    <label>KV Store Utilization</label>
+    <fieldset submitButton="false">
+
+        <input type="multiselect" token="host" searchWhenChanged="true">
+            <label>Host</label>
+            <choice value="*">All</choice>
+            <search fieldForValue="host" fieldForLabel="host">
+                <query><![CDATA[ index=_internal sourcetype=aws:*:log | stats count by host|table host ]]></query>
+            </search>
+            <prefix> (</prefix>
+            <suffix>) </suffix>
+            <valuePrefix>host="</valuePrefix>
+            <valueSuffix>"</valueSuffix>
+            <delimiter> OR </delimiter>
+            <default>All</default>
+            <fieldForLabel>host</fieldForLabel>
+            <fieldForValue>host</fieldForValue>
+        </input>
+
+        <input type="time" searchWhenChanged="true">
+            <label>Time Range</label>
+            <default>
+                <earliest>-1d</earliest>
+                <latest>now</latest>
+            </default>
+        </input>
+    </fieldset>
+
+    <row>
+        <panel>
+            <table>
+                <title>AWS TA - KV Store Calls by Collection</title>
+                <search>
+                    <query>
+                        <![CDATA[
+                            index=_internal $host$ source=*splunkd_access* "Splunk_TA_aws/storage/collections"
+                            | rex field=uri "servicesNS/.*/Splunk_TA_aws/storage/collections/\w+/(?<collection_name>[^/?]*)"
+                            | eval collection_name = if(collection_name == "", "Get/Create Collection", collection_name)
+                            | chart count by collection_name, method
+                            | rename collection_name as "Collection Name"
+                            | addtotals
+                            | sort -Total
+                        ]]>
+                    </query>
+                    <earliest>$earliest$</earliest>
+                    <latest>$latest$</latest>
+                </search>
+                <drilldown>
+                    <condition field="Collection Name">
+                        <set token="collection_name">$click.value2$</set>
+                    </condition>
+                </drilldown>
+            </table>
+        </panel>
+    </row>
+
+    <row>
+        <panel depends="$collection_name$">
+            <chart>
+                <title>KV Store Collection - $collection_name$ : Average time taken by KV Store calls</title>
+                <search>
+                    <query>
+                        <![CDATA[
+                            index=_internal $host$ source=*splunkd_access* "Splunk_TA_aws/storage/collections"
+                            | rex field=uri "servicesNS/.*/Splunk_TA_aws/storage/collections/\w+/(?<collection_name>[^/?]*)"
+                            | eval collection_name = if(collection_name == "", "Get/Create Collection", collection_name)
+                            | where collection_name = "$collection_name$"
+                            | timechart avg(spent) by method
+                        ]]>
+                    </query>
+                    <earliest>$earliest$</earliest>
+                    <latest>$latest$</latest>
+                </search>
+                <option name="charting.chart">line</option>
+                <option name="charting.axisTitleY.text">Avg time (milliseconds)</option>
+            </chart>
+        </panel>
+    </row>
+
+    <row>
+        <panel>
+            <table>
+                <title>Other TA - KV Store Calls by Collection</title>
+                <search>
+                    <query>
+                        <![CDATA[
+                            index=_internal $host$ source=*splunkd_access* "storage/collections" NOT Splunk_TA_aws
+                            | rex field=uri "servicesNS/.*/(?<app_name>.*)/storage/collections/\w+/(?<collection_name>[^/?]*)"
+                            | eval collection_name = if(collection_name == "", "Get/Create Collection", collection_name)
+                            | eval app_collection_name = app_name." - ".collection_name
+                            | chart count by app_collection_name, method
+                            | rename app_collection_name as "App/TA - Collection Name"
+                            | addtotals
+                            | sort -Total
+                        ]]>
+                    </query>
+                    <earliest>$earliest$</earliest>
+                    <latest>$latest$</latest>
+                </search>
+            </table>
+        </panel>
+    </row>
+
+</form>
+
+<!--
+// jscpd:ignore-end
+-->

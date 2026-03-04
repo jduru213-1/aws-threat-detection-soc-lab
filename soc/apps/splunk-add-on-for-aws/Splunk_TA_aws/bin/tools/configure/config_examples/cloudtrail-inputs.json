@@ -1,0 +1,20 @@
+[
+  {
+      "stanzas":[
+          {
+            "name": "cloudtrail_op",
+            "aws_account": "aws_account_0",
+            "aws_region": "ap-south-1",
+            "sqs_queue": "sqs-queue",
+            "remove_files_when_done": "0",
+            "exclude_describe_events": "0",
+            "blacklist": "0",
+            "excluded_events_index": "0",
+            "private_endpoint_enabled": "0",
+            "interval": "60",
+            "sourcetype": "aws:cloudtrail",
+            "index": "default"
+          }
+      ]
+  }
+]

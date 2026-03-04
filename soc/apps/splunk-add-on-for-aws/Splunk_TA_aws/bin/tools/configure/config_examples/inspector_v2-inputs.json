@@ -1,0 +1,15 @@
+[
+    {
+        "stanzas": [
+            {
+                "name": "inspector_v2_01",
+                "account": "aws_account_0",
+                "aws_iam_role": "aws_iam_role_0",
+                "regions": "eu-west-1,us-east-1,us-west-2",
+                "polling_interval": "300",
+                "sourcetype": "aws:inspector:v2:findings",
+                "index": "default"
+            }
+        ]
+    }
+]

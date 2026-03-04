@@ -1,0 +1,45 @@
+eventSource,change_type
+iam.amazonaws.com,AAA
+ec2.amazonaws.com,virtual computing
+sts.amazonaws.com,AAA
+sts.us-east-1.amazonaws.com,AAA
+sts.us-west-2.amazonaws.com,AAA
+sts.us-west-1.amazonaws.com,AAA
+sts.eu-west-1.amazonaws.com,AAA
+sts.eu-central-1.amazonaws.com,AAA
+sts.ap-southeast-1.amazonaws.com,AAA
+sts.ap-southeast-2.amazonaws.com,AAA
+sts.ap-northeast-1.amazonaws.com,AAA
+sts.sa-east-1.amazonaws.com,AAA
+sns.amazonaws.com,messaging
+s3.amazonaws.com,storage
+cloudformation.amazonaws.com,cloud resources
+firehose.amazonaws.com,data
+lambda.amazonaws.com,cloud resources
+logs.amazonaws.com,logging
+elasticloadbalancing.amazonaws.com,network
+cassandra.amazonaws.com,data
+sqs.amazonaws.com,messaging
+ds.amazonaws.com,AAA
+sagemaker.amazonaws.com,Machine learning
+fsx.amazonaws.com,filesystem
+securityhub.amazonaws.com,security
+drs.amazonaws.com,system management
+secretsmanager.amazonaws.com,AAA
+glue.amazonaws.com,data
+macie2.amazonaws.com,security
+sqlworkbench.amazonaws.com,database
+sso-directory.amazonaws.com,AAA
+cognito-idp.amazonaws.com,AAA
+ecr.amazonaws.com,cloud resources
+rds.amazonaws.com,database
+elasticfilesystem.amazonaws.com,filesystem
+account.amazonaws.com,AAA
+controltower.amazonaws.com,cloud management
+dynamodb.amazonaws.com,database
+fms.amazonaws.com,firewall
+guardduty.amazonaws.com,security
+kinesis.amazonaws.com,data
+network-firewall.amazonaws.com,firewall
+opsworks.amazonaws.com,application management
+workspaces.amazonaws.com,cloud service

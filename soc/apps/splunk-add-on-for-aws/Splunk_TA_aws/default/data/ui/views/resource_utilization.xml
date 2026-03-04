@@ -1,0 +1,267 @@
+<!--
+// jscpd:ignore-start
+-->
+<form version="1.1" script="MultiSelectHelper.js">
+    <label>Resource Utilization</label>
+    <fieldset submitButton="false">
+
+        <input type="multiselect" token="host" searchWhenChanged="true">
+            <label>Host</label>
+            <choice value="*">All</choice>
+            <search fieldForValue="host" fieldForLabel="host">
+                <query>
+                <![CDATA[ index=_internal sourcetype=aws:*:log | stats count by host|table host ]]>
+                </query>
+            </search>
+            <prefix> (</prefix>
+            <suffix>) </suffix>
+            <valuePrefix>host="</valuePrefix>
+            <valueSuffix>"</valueSuffix>
+            <delimiter> OR </delimiter>
+            <default>All</default>
+            <fieldForLabel>host</fieldForLabel>
+            <fieldForValue>host</fieldForValue>
+        </input>
+
+        <input type="time" searchWhenChanged="true">
+            <label>Time Range</label>
+            <default>
+                <earliest>-1d</earliest>
+                <latest>now</latest>
+            </default>
+        </input>
+
+        <input type="multiselect" token="resource_util_modinput_single_instance" searchWhenChanged="true">
+            <label>Input Type - Single Instance</label>
+            <choice value="data.args=*aws_metadata.py OR data.args=*aws_kinesis.py OR data.args=*aws_cloudwatch_logs.py OR data.args=*aws_cloudwatch.py">All</choice>
+            <choice value="data.args=*aws_metadata.py">Metadata</choice>
+            <choice value="data.args=*aws_kinesis.py">Kinesis</choice>
+            <choice value="data.args=*aws_cloudwatch_logs.py">Cloudwatch Logs</choice>
+            <choice value="data.args=*aws_cloudwatch.py">Cloudwatch</choice>
+            <prefix> (</prefix>
+            <suffix>) </suffix>
+            <delimiter> OR </delimiter>
+            <default>All</default>
+        </input>
+
+        <input type="dropdown" token="resource_util_modinput_multi_instance" searchWhenChanged="true">
+            <label>Input Type - Multi Instance</label>
+            <choice value="data.args=*aws_sqs_based_s3.py">SQS-Based S3</choice>
+            <choice value="data.args=*aws_s3.py">Generic S3</choice>
+            <choice value="data.args=*splunk_ta_aws_logs.py">Incremental S3</choice>
+            <default>SQS-Based S3</default>
+            <change>
+                <condition value="data.args=*aws_sqs_based_s3.py">
+                    <set token="modinput_multi_instance">sourcetype=aws:sqsbaseds3:log</set>
+                </condition>
+                <condition value="data.args=*aws_s3.py">
+                    <set token="modinput_multi_instance">sourcetype=aws:s3:log</set>
+                </condition>
+                <condition value="data.args=*splunk_ta_aws_logs.py">
+                    <set token="modinput_multi_instance">sourcetype=aws:logs:log</set>
+                </condition>
+            </change>
+        </input>
+
+    </fieldset>
+
+    <row>
+        <panel>
+            <chart>
+                <title>Memory Utilization - Single Instance Inputs</title>
+                <search>
+                    <query>
+                        <![CDATA[
+                            index=_introspection $host$ source=*resource_usage* component="PerProcess" $resource_util_modinput_single_instance$
+                            | rename data.args as data_args
+                            | eval input_type = mvindex(split(data_args, "/"), -1)
+                            | timechart max(data.pct_memory) as "pct_memory" by input_type
+                        ]]>
+                    </query>
+                    <earliest>$earliest$</earliest>
+                    <latest>$latest$</latest>
+                </search>
+                <option name="charting.chart">line</option>
+            </chart>
+        </panel>
+        <panel>
+            <chart>
+                <title>CPU Utilization - Single Instance Inputs</title>
+                <search>
+                    <query>
+                        <![CDATA[
+                            index=_introspection $host$ source=*resource_usage* component="PerProcess" $resource_util_modinput_single_instance$
+                            | rename data.args as data_args
+                            | eval input_type = mvindex(split(data_args, "/"), -1)
+                            | timechart max(data.normalized_pct_cpu) as "pct_cpu" by input_type
+                        ]]>
+                    </query>
+                    <earliest>$earliest$</earliest>
+                    <latest>$latest$</latest>
+                </search>
+                <option name="charting.chart">line</option>
+            </chart>
+        </panel>
+    </row>
+    <row>
+        <panel>
+            <table>
+                <title>Single Instance Inputs Count</title>
+                <search>
+                    <query>
+                        <![CDATA[
+                            | rest /servicesNS/nobody/Splunk_TA_aws/configs/conf-aws_metadata_tasks splunk_server=*
+                            | eval disabled = if(isnotnull(disabled), disabled, 0)
+                            | stats count as NumberOfInputs by disabled, splunk_server
+                            | eval InputType = "Metadata", Status = if(disabled == 0, "Active", "Inactive")
+                            | rename splunk_server as "SplunkServer(Host)"
+                            | table "SplunkServer(Host)", InputType, Status, NumberOfInputs
+                            | append [
+                            | rest /servicesNS/nobody/Splunk_TA_aws/configs/conf-aws_kinesis_tasks splunk_server=*
+                            | eval disabled = if(isnotnull(disabled), disabled, 0)
+                            | stats count as NumberOfInputs by disabled, splunk_server
+                            | eval InputType = "Kinesis", Status = if(disabled == 0, "Active", "Inactive")
+                            | rename splunk_server as "SplunkServer(Host)"
+                            | table "SplunkServer(Host)", InputType, Status, NumberOfInputs
+                            ]
+                            | append [
+                            | rest /servicesNS/nobody/Splunk_TA_aws/configs/conf-aws_cloudwatch_logs_tasks splunk_server=*
+                            | eval disabled = if(isnotnull(disabled), disabled, 0)
+                            | stats count as NumberOfInputs by disabled, splunk_server
+                            | eval InputType = "Cloudwatch Logs", Status = if(disabled == 0, "Active", "Inactive")
+                            | rename splunk_server as "SplunkServer(Host)"
+                            | table "SplunkServer(Host)", InputType, Status, NumberOfInputs
+                            ]
+                            | append [
+                            | rest /servicesNS/nobody/Splunk_TA_aws/data/inputs/aws_cloudwatch splunk_server=*
+                            | eval InputType = "Cloudwatch - ".mvjoin(mvindex(split(title, "_"), 0, -2), "_"), disabled = if(isnotnull(disabled), disabled, 0)
+                            | stats count as NumberOfStanzas by InputType, disabled, splunk_server
+                            | eval Status = if(disabled == 0, "Active", "Inactive")
+                            | rename splunk_server as "SplunkServer(Host)"
+                            | table "SplunkServer(Host)", InputType, Status, NumberOfStanzas
+                            ]
+                            | eval NumberOfStanzas = coalesce(NumberOfStanzas, NumberOfInputs)
+                            | fillnull value="-" NumberOfInputs
+                        ]]>
+                    </query>
+                    <earliest>$earliest$</earliest>
+                    <latest>$latest$</latest>
+                </search>
+                <option name="count">5</option>
+            </table>
+        </panel>
+    </row>
+
+    <row>
+        <panel>
+            <chart>
+                <title>Memory Utilization - Multi Instance Inputs</title>
+                <search>
+                    <query>
+                        <![CDATA[
+                            index=_introspection $host$ source=*resource_usage* component="PerProcess" $resource_util_modinput_multi_instance$
+                            | eval pid='data.pid'
+                            | join pid [search index=_internal $modinput_multi_instance$ | where isnotnull(datainput)]
+                            | table _time, pid, datainput, data.pct_memory, data.normalized_pct_cpu
+                            | timechart max(data.pct_memory) as "pct_memory" by datainput
+                        ]]>
+                    </query>
+                    <earliest>$earliest$</earliest>
+                    <latest>$latest$</latest>
+                </search>
+                <option name="charting.chart">line</option>
+            </chart>
+        </panel>
+        <panel>
+            <chart>
+                <title>CPU Utilization - Multi Instance Inputs</title>
+                <search>
+                    <query>
+                        <![CDATA[
+                            index=_introspection $host$ source=*resource_usage* component="PerProcess" $resource_util_modinput_multi_instance$
+                            | eval pid='data.pid'
+                            | join pid [search index=_internal $modinput_multi_instance$ | where isnotnull(datainput)]
+                            | table _time, pid, datainput, data.pct_memory, data.normalized_pct_cpu
+                            | timechart max(data.normalized_pct_cpu) as "pct_cpu" by datainput
+                        ]]>
+                    </query>
+                    <earliest>$earliest$</earliest>
+                    <latest>$latest$</latest>
+                </search>
+                <option name="charting.chart">line</option>
+            </chart>
+        </panel>
+    </row>
+
+    <row>
+        <panel>
+            <table>
+                <title>Multi Instance Inputs Count</title>
+                <search>
+                    <query>
+                        <![CDATA[
+                            | rest /servicesNS/nobody/Splunk_TA_aws/data/inputs/aws_sqs_based_s3 splunk_server=*
+                            | eval disabled = if(isnotnull(disabled), disabled, 0)
+                            | stats count by disabled, splunk_server
+                            | eval InputType = "SQS-Based S3", Status = if(disabled == 0, "Active", "Inactive")
+                            | rename count as NumberOfInputs, splunk_server as "SplunkServer(Host)"
+                            | table "SplunkServer(Host)", InputType, Status, NumberOfInputs
+                            | append [
+                            | rest /servicesNS/nobody/Splunk_TA_aws/data/inputs/aws_s3 splunk_server=*
+                            | eval disabled = if(isnotnull(disabled), disabled, 0)
+                            | stats count by disabled, splunk_server
+                            | eval InputType = "Generic S3", Status = if(disabled == 0, "Active", "Inactive")
+                            | rename count as NumberOfInputs, splunk_server as "SplunkServer(Host)"
+                            | table "SplunkServer(Host)", InputType, Status, NumberOfInputs
+                            ]
+                            | append [
+                            | rest /servicesNS/nobody/Splunk_TA_aws/data/inputs/splunk_ta_aws_logs splunk_server=*
+                            | eval disabled = if(isnotnull(disabled), disabled, 0)
+                            | stats count by disabled, splunk_server
+                            | eval InputType = "Incremental S3", Status = if(disabled == 0, "Active", "Inactive")
+                            | rename count as NumberOfInputs, splunk_server as "SplunkServer(Host)"
+                            | table "SplunkServer(Host)", InputType, Status, NumberOfInputs
+                            ]
+                        ]]>
+                    </query>
+                    <earliest>$earliest$</earliest>
+                    <latest>$latest$</latest>
+                </search>
+                <option name="count">5</option>
+            </table>
+        </panel>
+    </row>
+
+    <!-- KV Store information panels -->
+    <row>
+        <panel>
+            <chart>
+                <title>Splunk KV Store Calls Count</title>
+                <search>
+                    <query>
+                        <![CDATA[
+                            index=_internal $host$ source=*splunkd_access* "storage/collections"
+                            | rex field=uri "servicesNS/.*/(?<app_name>.*)/storage/collections"
+                            | eval classifier = if(app_name == "Splunk_TA_aws", app_name, "Other")
+                            | timechart count by classifier
+                            | addtotals
+                        ]]>
+                    </query>
+                    <earliest>$earliest$</earliest>
+                    <latest>$latest$</latest>
+                </search>
+                <drilldown>
+                    <link target="_blank">
+                        kvstore_utilization?latest=$latest$&amp;earliest=$earliest$&amp;form.host=$form.host$
+                    </link>
+                </drilldown>
+                <option name="charting.chart">line</option>
+            </chart>
+        </panel>
+    </row>
+
+</form>
+
+<!--
+// jscpd:ignore-end
+-->

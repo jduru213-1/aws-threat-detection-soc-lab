@@ -1,0 +1,15 @@
+[
+    {
+        "stanzas": [
+            {
+                "name": "sqs_01",
+                "aws_account": "aws_account_0",
+                "aws_region": "[\"ap-south-1\"]",
+                "sqs_queues": "[\"Queue1\"]",
+                "interval": "600",
+                "index": "default",
+                "sourcetype": "aws:sqs"
+            }
+        ]
+    }
+]

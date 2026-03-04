@@ -1,0 +1,154 @@
+eventName,object_category
+RunInstances,instance
+StartInstances,instance
+StopInstances,instance
+TerminateInstances,instance
+RebootInstances,instance
+CreateSecurityGroup,security_group
+DeleteSecurityGroup,security_group
+AuthorizeSecurityGroupIngress,security_group
+AuthorizeSecurityGroupEgress,security_group
+RevokeSecurityGroupIngress,security_group
+RevokeSecurityGroupEgress,security_group
+CreateBucket,bucket
+DeleteBucket,bucket
+PutBucketPublicAccessBlock,bucket
+PutObject,bucket
+CreateVolume,volume
+DeleteVolume,volume
+AttachVolume,volume
+DetachVolume,volume
+CreateUser,user
+DeleteUser,user
+UpdateUser,user
+CreateNetworkInterface,network_interface
+DeleteNetworkInterface,network_interface
+CreateNetworkAcl,ACL
+CreateNetworkAclEntry,ACL
+DeleteNetworkAcl,ACL
+DeleteNetworkAclEntry,ACL
+ReplaceNetworkAclEntry,ACL
+ReplaceNetworkAclAssociation,ACL
+PutBucketAcl,bucket
+CreateChangeSet,stack
+CreateDeliveryStream,delivery_stream
+CreateKeyspace,keyspace
+CreateLoadBalancerListeners,load_balancer
+CreateLoadBalancerPolicy,load_balancer
+CreateQueue,message_queue
+CreateTable,table
+CreateFunction20150331,function
+CreateLogGroup,log_group
+CreateLogStream,log_stream
+GetBucketEncryption,bucket
+CreateLoginProfile,user
+ListSigningCertificates,user
+CreateAccessKey,user
+CreateAccessKey,user
+ListAccessKeys,user
+CreateVirtualMFADevice,user
+GetUser,user
+GetAccountSummary,user
+ListAccountAliases,user
+ListAliases,alias
+ListRoles,user
+AddMemberToGroup,user
+AdminCreateUser,user
+AdminGetUser,user
+AdminResetUserPassword,user
+AttachRolePolicy,role
+BatchGetImage,image
+CreateAuthorizer,authorizer
+CreateClientVpnEndpoint,client-vpn-endpoint
+CreateConnection,connection
+CreateDBClusterSnapshot,cluster
+CreateDataChannel,service
+CreateLoadBalancer,load balancer
+CreateNamespace,namespace
+CreatePolicy,policy
+CreateServiceLinkedRole,service linked role
+CreateSnapshot,snapshot
+CreateVpc,vpc
+CreateWorkgroup,workgroup
+Decrypt,ciphertext
+DeleteDBSubnetGroup,subnet_group
+DeleteVpcEndpoints,vpc endpoint
+DescribeAccessPoints,access point
+DescribeAccountSubscription,aws account
+DescribeAddresses,AWS account
+DescribeBackupPolicy,Elastic filesystem
+DescribeCluster,EKS cluster
+DescribeConfigurationSettings,application
+DescribeContinuousBackups,table
+DescribeCustomerGateways,VPN customer gateways
+DescribeDBClusterSnapshotAttributes,DB cluster snapshot attribute
+DescribeDBClusterSnapshots,DB cluster snapshot
+DescribeDBClusters,DB cluster
+DescribeDBEngineVersions,DB engine
+DescribeDBInstances,DB instance
+DescribeDBSecurityGroups,DB security group
+DescribeDBSnapshotAttributes,DB snapshot attribute
+DescribeDBSnapshots,DB snapshot
+DescribeDBSubnetGroups,DB Subnet Group
+DescribeDRTAccess,Amazon S3 log buckets
+DescribeDeliveryStream,Delivery stream
+DescribeDirectories,directory
+DescribeEndpoint,endpoint
+DescribeFileSystemPolicy,Filesystem Policy
+DescribeFileSystems,Elastic filesystem
+DescribeFleets,fleet
+DescribeHosts,Dedicated Host
+DescribeHub,Security Hub
+DescribeImages,Image
+DescribeInstances,Instance
+DescribeInternetGateways,internet gateway
+DescribeJobs,DRS batch jobs
+DescribeKeyPairs,key pairs
+DescribeListeners,listeners
+DescribeLoadBalancers,load balancers
+DescribeSecret,secret
+GetDomainPermissionsPolicy,policy
+GetSecretValue,secret
+GetSecurityConfigurations,security configurations
+ListOrganizationAdminAccounts,admin accounts
+AssumeRole,user
+DescribeLogStreams,logGroupName
+DescribeLoggingConfiguration,firewall
+DescribeNotebookInstance,NotebookInstance
+DescribeOrganizationConfiguration,delegated administrator
+DescribeRepositories,image repository
+DescribeReservedDBInstances,reserved DB instance
+DescribeReservedInstances,reserved instance
+DescribeReservedInstancesListings,reserved instance listings
+DescribeRules,rule
+DescribeSecurityGroupRules,security group rule
+DescribeSnapshots,EBS snapshot
+DescribeStacks,stack
+DescribeStream,data stream
+DescribeTable,table
+DescribeTargetGroups,target group
+DescribeUserProfiles,users
+DescribeVolumes,EBS volumes
+DescribeVpcEndpointServicePermissions,Service
+DescribeVpnConnections,vpn connection
+DescribeWorkspaceDirectories,workspace directory
+DescribeWorkspaces,workspace
+DetachInternetGateway,internet gateway
+DescribeNatGateways,nat gateway
+DescribeNetworkAcls,network acl
+DescribeNetworkInterfaces,network interface
+DescribeRouteTables,route table
+DescribeSecurityGroups,security group
+DescribeSubnets,subnet
+DescribeVpcEndpoints,vpc endpoint
+DescribeVpcs,vpc
+DriverExecute,redshift cluster
+EnableControl,control
+Error_GET,error page
+GenerateCredentialReport,AWS account
+GetAccessPointPolicy,access point policy
+GetAccountPasswordPolicy,password policy
+GetAccountPublicAccessBlock,PublicAccessBlock
+GetAdminScope,administrative scope
+GetAlternateContact,alternate contact
+GetContactInformation,primary contact

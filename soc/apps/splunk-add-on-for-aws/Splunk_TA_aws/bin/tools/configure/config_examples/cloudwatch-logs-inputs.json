@@ -1,0 +1,23 @@
+[
+    {
+        "stanzas": [
+            {
+                "name": "cloudwatch_logs_op1",
+                "account": "test",
+                "region": "ap-south-1",
+                "groups": "log-group",
+                "delay": "1800",
+                "only_after": "1970-01-01T00:00:00",
+                "stream_matcher": "[\".*\"]",
+                "private_endpoint_enabled": "0",
+                "logs_private_endpoint_url": "https://vpce-0136f81db5448169b-f7bw9qoq.logs.us-east-1.vpce.amazonaws.com",
+                "sts_private_endpoint_url": "https://vpce-0364759a1fc9ba737-bvbqlnmh.sts.us-east-1.vpce.amazonaws.com",
+                "sourcetype": "aws:cloudwatchlogs",
+                "index": "default",
+                "interval": "600",
+                "query_window_size": "10",
+                "metric_index_flag": "0"
+            }
+        ]
+    }
+]

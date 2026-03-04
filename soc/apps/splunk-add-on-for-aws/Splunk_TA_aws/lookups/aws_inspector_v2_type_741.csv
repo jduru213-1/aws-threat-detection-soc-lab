@@ -1,0 +1,7 @@
+severity,type
+informational,warning
+low,event
+medium,event
+high,alert
+critical,alarm
+untriaged,warning

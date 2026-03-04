@@ -1,0 +1,16 @@
+[
+    {
+        "stanzas": [
+            {
+             "name": "config_op",
+             "account": "aws_account_0",
+             "aws_iam_role": "aws_iam_role_0",
+             "region": "[\"ap-south-1\"]",
+             "rule_names": "[\"test-config-rule\"]",
+             "polling_interval": "300",
+             "sourcetype": "aws:config:rule",
+             "index": "default"
+            }
+        ]
+    }
+]

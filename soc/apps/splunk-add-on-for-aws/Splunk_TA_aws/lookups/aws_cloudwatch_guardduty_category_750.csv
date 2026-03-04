@@ -1,0 +1,46 @@
+subject,category
+Backdoor:EC2/DenialOfService.Tcp,Denial of Service
+Backdoor:EC2/DenialOfService.UdpOnTcpPorts,Denial of Service
+Backdoor:Lambda/C&CActivity.B,Risky Communication
+Backdoor:Runtime/C&CActivity.B!DNS,Risky Communication
+CryptoCurrency:Lambda/BitcoinTool.B,CryptoCurrency
+CryptoCurrency:Runtime/BitcoinTool.B!DNS,CryptoCurrency
+DefenseEvasion:EC2/UnusualDNSResolver,DefenseEvasion
+Impact:EC2/MaliciousDomainRequest.Reputation,Risky Communication
+Impact:EC2/PortSweep,Risky Communication
+Impact:EC2/WinRMBruteForce,BruteForce
+Impact:Runtime/MaliciousDomainRequest.Reputation,Risky Communication
+Recon:EC2/PortProbeEMRUnprotectedPort,Recon
+Trojan:EC2/BlackholeTraffic,Trojan
+Trojan:EC2/DGADomainRequest.C!DNS,Trojan
+Trojan:EC2/DNSDataExfiltration,Trojan
+Trojan:Lambda/BlackholeTraffic,Trojan
+Trojan:Runtime/BlackholeTraffic,Trojan
+Trojan:Runtime/DGADomainRequest.C!DNS,Trojan
+UnauthorizedAccess:EC2/MaliciousIPCaller.Custom,UnauthorizedAccess
+UnauthorizedAccess:Lambda/MaliciousIPCaller.Custom,UnauthorizedAccess
+UnauthorizedAccess:Runtime/TorClient,UnauthorizedAccess
+Backdoor:EC2/C&CActivity.B!DNS,Command and Control Communication
+Backdoor:EC2/DenialOfService.Dns,Denial of Service
+Backdoor:EC2/DenialOfService.UnusualProtocol,Denial of Service
+Behavior:EC2/TrafficVolumeUnusual,Unusual Communication
+CryptoCurrency:EC2/BitcoinTool.B!DNS,CryptoCurrency
+Recon:EC2/PortProbeUnprotectedPort,Recon
+Recon:EC2/Portscan,Recon
+Trojan:EC2/BlackholeTraffic!DNS,Trojan
+Trojan:EC2/PhishingDomainRequest!DNS,Trojan
+UnauthorizedAccess:EC2/SSHBruteForce,BruteForce
+UnauthorizedAccess:EC2/TorClient,UnauthorizedAccess
+UnauthorizedAccess:IAMUser/MaliciousIPCaller,UnauthorizedAccess
+PenTest:S3/ParrotLinux,PenTest
+Stealth:IAMUser/CloudTrailLoggingDisabled,Stelth
+Policy:S3/AccountBlockPublicAccessDisabled,Policy
+Policy:S3/BucketAnonymousAccessGranted,Policy
+Impact:S3/PermissionsModification.Unusual,PrivilegeEscalation
+PrivilegeEscalation:IAMUser/AdministrativePermissions,PrivilegeEscalation
+Persistence:IAMUser/UserPermissions,CredentialAccess
+Impact:S3/ObjectDelete.Unusual,Unusual Communication
+Exfiltration:S3/ObjectRead.Unusual,Exfiltration
+UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration,UnauthorizedAccess
+UnauthorizedAccess:EC2/RDPBruteForce,BruteForce
+Policy:IAMUser/RootCredentialUsage,Policy

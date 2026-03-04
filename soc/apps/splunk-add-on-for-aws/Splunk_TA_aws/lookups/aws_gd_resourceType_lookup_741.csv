@@ -1,0 +1,7 @@
+resource_type,resource_role,src_type,dest_type
+Instance,ACTOR,instance,
+Instance,TARGET,,instance
+S3Bucket,ACTOR,storage,
+S3Bucket,TARGET,,storage
+AccessKey,ACTOR,user,
+AccessKey,TARGET,,user

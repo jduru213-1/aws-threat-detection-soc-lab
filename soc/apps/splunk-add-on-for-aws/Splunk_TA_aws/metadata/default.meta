@@ -1,0 +1,16 @@
+# Application-level permissions
+
+[]
+access = read : [ * ], write : [ admin, sc_admin ]
+export = system
+
+[views/setup]
+export = none
+
+[html/Configuration]
+owner = none
+export = none
+
+[html/Inputs]
+owner = none
+export = none

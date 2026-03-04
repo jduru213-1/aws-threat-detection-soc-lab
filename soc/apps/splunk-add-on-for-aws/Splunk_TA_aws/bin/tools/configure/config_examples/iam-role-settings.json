@@ -1,0 +1,10 @@
+[
+    {
+        "stanzas": [
+            {
+                "name": "aws_iam_role_0",
+                "arn": "arn:aws:iam::00000000000:role/role-name"
+            }
+        ]
+    }
+]

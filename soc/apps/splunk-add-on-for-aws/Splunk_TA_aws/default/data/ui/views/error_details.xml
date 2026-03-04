@@ -1,0 +1,119 @@
+<form version="1.1" script="MultiSelectHelper.js">
+    <label>Error Details</label>
+    <fieldset submitButton="false">
+        <input type="time" searchWhenChanged="true">
+            <label>Time Range</label>
+            <default>
+                <earliest>-1d</earliest>
+                <latest>now</latest>
+            </default>
+        </input>
+
+        <input type="multiselect" token="host" searchWhenChanged="true">
+            <label>Host</label>
+            <choice value="*">All</choice>
+            <search fieldForValue="host" fieldForLabel="host">
+                <query><![CDATA[ index=_internal sourcetype=aws:*:log | stats count by host|table host ]]></query>
+            </search>
+            <prefix> (</prefix>
+            <suffix>) </suffix>
+            <valuePrefix>host="</valuePrefix>
+            <valueSuffix>"</valueSuffix>
+            <delimiter> OR </delimiter>
+            <default>All</default>
+            <fieldForLabel>host</fieldForLabel>
+            <fieldForValue>host</fieldForValue>
+        </input>
+
+        <input type="multiselect" token="modinput" searchWhenChanged="true">
+            <label>Input Type</label>
+            <choice value="sourcetype=aws:s3:log OR sourcetype=aws:logs:log OR sourcetype=aws:sqsbaseds3:log OR sourcetype=aws:metadata*:log OR sourcetype=aws:cloudwatch:log OR sourcetype=aws:cloudwatchlogs:log OR sourcetype=aws:kinesis:log">All</choice>
+            <choice value="sourcetype=aws:s3:log">Generic S3</choice>
+            <choice value="sourcetype=aws:logs:log">Incremental S3</choice>
+            <choice value="sourcetype=aws:sqsbaseds3:log">SQS-Based S3</choice>
+            <choice value="sourcetype=aws:metadata*:log">Metadata</choice>
+            <choice value="sourcetype=aws:cloudwatch:log">Cloudwatch</choice>
+            <choice value="sourcetype=aws:cloudwatchlogs:log">Cloudwatch Logs</choice>
+            <choice value="sourcetype=aws:kinesis:log">Kinesis</choice>
+            <prefix> (</prefix>
+            <suffix>) </suffix>
+            <delimiter> OR </delimiter>
+            <default>All</default>
+        </input>
+
+        <input type="multiselect" token="datainput" searchWhenChanged="true" dependsOn="modinput">
+            <label>Input Name</label>
+            <choice value="*">All</choice>
+            <search fieldForValue="datainput" fieldForLabel="datainput_prefix">
+                <query><![CDATA[
+                index=_internal $modinput$
+                | stats count by datainput
+                | table datainput
+                | rex field=datainput "((?P<datainput_prefix>.*?)_[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$)"
+                | fillnull value="" datainput_prefix
+                | eval datainput=if(datainput_prefix!="", datainput_prefix+"_*", datainput)
+                | dedup datainput
+                | table datainput, datainput_prefix
+                | sort datainput
+                ]]></query>
+            </search>
+            <prefix> (</prefix>
+            <suffix>) </suffix>
+            <valuePrefix>datainput="</valuePrefix>
+            <valueSuffix>"</valueSuffix>
+            <delimiter> OR </delimiter>
+            <default>All</default>
+            <fieldForLabel>datainput_prefix</fieldForLabel>
+            <fieldForValue>datainput</fieldForValue>
+        </input>
+
+        <input type="multiselect" token="errortype" searchWhenChanged="true">
+            <label>Error Type</label>
+            <choice value="*">All</choice>
+            <choice value="uncategorized">uncategorized</choice>
+            <search fieldForValue="ErrorType" fieldForLabel="ErrorType">
+                <query><![CDATA[|inputlookup aws_health_error_type.csv|stats count by ErrorType|table ErrorType ]]></query>
+            </search>
+            <prefix> (</prefix>
+            <suffix>) </suffix>
+            <valuePrefix>ErrorType="</valuePrefix>
+            <valueSuffix>"</valueSuffix>
+            <delimiter> OR </delimiter>
+            <default>All</default>
+            <fieldForLabel>ErrorType</fieldForLabel>
+            <fieldForValue>ErrorType</fieldForValue>
+        </input>
+
+    </fieldset>
+
+    <row>
+        <panel>
+            <html>
+                <a href="https://aws.amazon.com/console/" target="_blank">Go to AWS console</a> |
+                <a href="https://docs.splunk.com/Documentation/AddOns/released/AWS/Troubleshooting" target="_blank">Go to Add-On troubleshooting section</a>
+            </html>
+            <table>
+                <title>Error Message Details</title>
+                <search>
+                    <query>
+                        <![CDATA[
+                            index=_internal $modinput$ $datainput$ $host$ level=ERROR
+                            | fillnull value="" ErrorCode, ErrorDetail
+                            | eval ErrorDetail = if((ErrorDetail == "" or ErrorDetail == "''") and !isnull(message), message, ErrorDetail)
+                            | lookup aws_health_error_type_lookup ErrorCode, ErrorDetail, sourcetype OUTPUT ErrorType
+                            | lookup aws_log_sourcetype_modinput_lookup sourcetype OUTPUT modinput
+                            | search $errortype$
+                            | stats count as ErrorCount by host, sourcetype, modinput, datainput, ErrorType, ErrorCode, ErrorDetail
+                            | lookup aws_health_error_resolutions_lookup sourcetype, ErrorCode, ErrorDetail OUTPUT PossibleReason, PossibleResolution
+                            | table host, sourcetype, modinput, datainput, ErrorType, ErrorCode, ErrorDetail, ErrorCount, PossibleReason, PossibleResolution
+                            | sort host, modinput, datainput, ErrorCode, ErrorDetail
+                        ]]>
+                    </query>
+                    <earliest>$earliest$</earliest>
+                    <latest>$latest$</latest>
+                </search>
+            </table>
+        </panel>
+    </row>
+
+</form>

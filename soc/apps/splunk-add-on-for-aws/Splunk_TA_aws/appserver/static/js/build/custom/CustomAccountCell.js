@@ -1,0 +1,2 @@
+import{_ as i,a as e}from"./_rollupPluginBabelHelpers-5e3fb531.js";var t=function(){function t(i,s,r,a,n){e(this,t),this.globalConfig=i,this.serviceName=s,this.el=r,this.row=a,this.field=n}return i(t,[{key:"render",value:function(){var i="";if("aws_account"===this.serviceName||"aws_private_account"===this.serviceName)if("iam"===this.field)i=this.row.iam?"Yes":"No";else if("sts_private_endpoint_url"===this.field){i=this.row.sts_private_endpoint_url||"Not Provided"}return this.el.innerHTML=i,this}}]),t}();export{t as default};
+//# sourceMappingURL=CustomAccountCell.js.map

@@ -1,0 +1,12 @@
+[
+    {
+        "stanzas":[
+            {
+              "name": "aws_account_0",
+              "key_id": "ABCDEFGHIJKLMNOPQRST",
+              "secret_key": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmn",
+              "category": "1"
+            }
+        ]
+    }
+]

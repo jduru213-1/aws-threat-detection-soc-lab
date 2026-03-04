@@ -1,0 +1,60 @@
+Metadata-Version: 2.4
+Name: splunksdc
+Version: 1.2.1
+Summary: Library providing some helper functionalities for Splunk Cloud TAs
+License: Apache-2.0
+License-File: LICENSE
+Author: Splunk Inc,
+Author-email: sales@splunk.com
+Requires-Python: >=3.7,<4.0
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Programming Language :: Python :: 3.14
+Requires-Dist: requests (>=2.31.0,<3.0.0)
+Requires-Dist: sortedcontainers (>=2)
+Requires-Dist: splunk-sdk (>=2)
+Requires-Dist: u-msgpack-python (>=2)
+Description-Content-Type: text/markdown
+
+# README
+Library providing some helper functionalities for Splunk Cloud TAs
+
+# Development
+## Dependencies
+To install all dependencies (including dev) use the following command:
+```
+poetry install
+```
+
+## Commit Hooks
+To enable `pre-commit` hooks (needs to be done only once per env) run:
+```
+pre-commit install
+```
+
+## Pull Requests
+General guidelines:
+- Follow conventional commits naming convention for both commits and pull request titles
+- Squash your commits while merging - it's always nice to have a clean commit history. You can do it either with `Squash and merge` GitHub functionality or manually using `git rebase -i`
+
+## Releases
+To create a new release tag for this library execute the following commands:
+
+```
+bump-my-version <part>    # part - `patch`, `minor` or `major`
+
+git push
+git push --tags
+```
+
+# Next Steps
+- automate release tag creation
+- add CI/CD
+

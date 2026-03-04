@@ -1,0 +1,25 @@
+[
+    {
+        "stanzas": [
+            {
+                "name": "sqs_based_s3_02",
+                "aws_account": "aws_account_0",
+                "aws_iam_role": "aws_iam_role_0",
+                "using_dlq": "1",
+                "sqs_queue_url": "https://sqs.ap-southeast-1.amazonaws.com/0000000000/my-queue",
+                "sqs_queue_region": "ap-southeast-1",
+                "s3_file_decoder": "CloudTrail",
+                "sqs_batch_size": "10",
+                "index": "default",
+                "interval": "300",
+                "sourcetype": "aws:cloudtrail",
+                "parse_csv_with_delimiter": ",",
+                "parse_csv_with_header": "0",
+                "sqs_sns_validation": "0",
+                "private_endpoint_enabled": "0",
+                "parse_firehose_error_data": "1",
+                "metric_index_flag": "0"
+            }
+        ]
+    }
+]

@@ -1,0 +1,2 @@
+import{_ as i,a as t}from"./_rollupPluginBabelHelpers-5e3fb531.js";var e=function(){function e(i,n,r,s,l){t(this,e),this.globalConfig=i,this.el=n,this.data=r,this.util=l,this.setValue=s,this.render=this.render.bind(this)}return i(e,[{key:"render",value:function(){return this.el.innerHTML='<div id="group_selection" style="margin-top: 6px;">Loading...</div>',this}}]),e}();export{e as default};
+//# sourceMappingURL=GroupSelection.js.map

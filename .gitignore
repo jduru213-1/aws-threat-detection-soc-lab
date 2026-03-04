@@ -1,0 +1,41 @@
+# OS / Editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.env
+.env.*
+.venv/
+venv/
+ENV/
+env/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+
+# Splunk / Docker data
+soc/var/
+soc/volumes/
+soc/log/
+soc/data/
+
+# VS Code / JetBrains
+.vscode/
+.idea/
+
+# Logs and temp files
+*.log
+*.bak
+*.tmp
