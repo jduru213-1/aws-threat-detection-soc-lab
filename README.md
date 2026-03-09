@@ -4,6 +4,8 @@
 
 This project gives you a hands-on environment to learn AWS threat detection with Splunk: run Splunk locally in Docker, stand up AWS logging (CloudTrail, Config, VPC Flow Logs) with one script, and practice detection. **Build** brings the environment up; **destroy** tears it down. No need to manage Terraform by hand unless you want to—the scripts handle it.
 
+I built this as a way to combine threat detection, security monitoring, and cloud in one place. It’s a fun lab—use it to learn cloud security basics, test your detections, and practice building new ones.
+
 ---
 
 ## 📋 What you need
