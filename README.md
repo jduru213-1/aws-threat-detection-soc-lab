@@ -14,6 +14,8 @@ The lab lets you:
 - **Create AWS resources in one step** (`build.ps1`): three S3 buckets, CloudTrail, Config, VPC Flow Logs, and a least-privilege IAM user for Splunk.
 - **Tear everything down** (`destroy.ps1`) so you don’t leave buckets or trails running.
 - Practice **search and detection** over `aws_cloudtrail`, `aws_config`, and `aws_vpcflow` once data flows.
+<img width="1330" height="778" alt="image" src="https://github.com/user-attachments/assets/c8b22a6b-affa-441a-88df-82d818fa1a4e" />
+
 
 ---
 
