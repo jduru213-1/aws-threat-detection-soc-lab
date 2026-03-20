@@ -4,9 +4,8 @@ This project is a Terraform-based SOC lab for learning AWS threat detection and 
 ---
 
 ## Archeitecture
-
+This flow shows how AWS telemetry is collected, stored, and ingested into Splunk so detections can be tested.
 ![Architecture: AWS to S3 (optional SQS) to Splunk Docker](https://github.com/user-attachments/assets/c8b22a6b-affa-441a-88df-82d818fa1a4e)
-This flow shows how AWS telemetry is collected, stored, and ingested into Splunk so detections can be tested end-to-end.
 
 ---
 
