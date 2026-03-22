@@ -5,9 +5,9 @@ Imagine spinning up a cloud SOC lab where the infrastructure is already in place
 
 ## At a glance
 - Cloud telemetry: CloudTrail, AWS Config, VPC Flow Logs
-- Ingestion: S3 + SQS queue notifications into Splunk
-- Validation: Stratus Red Team attack simulation
-- Outcome: detection-ready data pipeline and repeatable SOC practice loop
+- Ingestion: S3 sends ObjectCreated notifications to SQS, and Splunk polls SQS to fetch the referenced S3 log objects
+- Validation: Simulate cloud threats with Stratus Red Team to understand attacker behavior and test detections
+- Outcome: Build your cloud lab infrastructure once, then focus on running attacks, investigating logs, and improving detections without repeating setup every time
 
 ## Project snapshot
 | Field | Details |
@@ -155,11 +155,6 @@ Use build credentials (not Stratus):
 cd infra
 .\destroy.ps1
 ```
-
-## Notes on security
-- Don’t commit `.env*` files or access keys.
-- Treat the Splunk add-on IAM user (`soc-lab-splunk-addon`) as ingestion-only.
-- Treat the Stratus IAM user (`soc-lab-stratus`) as attack-simulation-only.
 
 ## Repo layout
 | Path | What |
