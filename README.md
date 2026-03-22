@@ -21,7 +21,6 @@ This diagram shows the end-to-end workflow: AWS telemetry is collected, stored, 
 
 ![Architecture: AWS to S3 (optional SQS) to Splunk Docker](https://github.com/user-attachments/assets/c65afbe7-7817-4510-8017-30ffeb521446)
 
-## How ingestion works (data flow)
 1. CloudTrail / AWS Config / VPC Flow Logs write objects to S3
 2. S3 sends ObjectCreated notifications to SQS queues (provisioned by Terraform)
 3. Splunk Add-on polls SQS, reads messages, fetches referenced S3 objects
@@ -33,7 +32,6 @@ This diagram shows the end-to-end workflow: AWS telemetry is collected, stored, 
 - [Quick project snapshot](#quick-project-snapshot)
 - [Why this matters](#why-this-matters)
 - [Architecture](#architecture)
-- [How ingestion works (data flow)](#how-ingestion-works-data-flow)
 - [Overview](#overview)
 - [Portfolio outcomes](#portfolio-outcomes)
 - [Evidence checklist](#evidence-checklist)
