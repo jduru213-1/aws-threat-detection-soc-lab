@@ -4,18 +4,12 @@ Imagine spinning up a cloud SOC lab where the infrastructure is already in place
 > Terraform handles the infrastructure heavy lifting so you can focus on cloud detections, not setup friction.
 
 ## At a glance
-- Cloud telemetry: CloudTrail, AWS Config, VPC Flow Logs
-- Ingestion: S3 sends ObjectCreated notifications to SQS, and Splunk polls SQS to fetch the referenced S3 log objects
-- Validation: Simulate cloud threats with Stratus Red Team to understand attacker behavior and test detections
-- Outcome: Build your cloud lab infrastructure once, then focus on running attacks, investigating logs, and improving detections without repeating setup every time
-
-## Project snapshot
-| Field | Details |
+| Area | Details |
 |------|---------|
-| Role | Security analyst / detection engineering learner |
-| Focus | AWS threat detection and cloud SOC workflow |
-| Stack | Terraform, AWS CloudTrail/Config/VPC Flow Logs, S3, SQS, Splunk, Stratus |
-| Outcome | Repeatable telemetry pipeline and validated detection scenarios |
+| Cloud telemetry | CloudTrail, AWS Config, VPC Flow Logs |
+| Ingestion | S3 sends ObjectCreated notifications to SQS, and Splunk polls SQS to fetch referenced S3 log objects |
+| Validation | Simulate cloud threats with Stratus Red Team to understand attacker behavior and test detections |
+| Outcome | Build cloud lab infrastructure once, then focus on attacks, investigations, and detection improvements without repeating setup |
 
 ## Why this matters
 This lab simulates how a cloud SOC ingests AWS telemetry, maps attacker behavior to logs, builds practical detections in Splunk, and validates detection coverage with adversary emulation.
