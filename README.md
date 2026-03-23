@@ -11,7 +11,6 @@ Imagine spinning up a cloud SOC lab where the infrastructure is already in place
 | Validation | Simulate cloud threats with Stratus Red Team to understand attacker behavior and test detections |
 | Outcome | Build cloud lab infrastructure once, then focus on attacks, investigations, and detection improvements without repeating setup |
 
-## Why this matters
 This lab simulates how a cloud SOC ingests AWS telemetry, maps attacker behavior to logs, builds practical detections in Splunk, and validates detection coverage with adversary emulation.
 
 ---
