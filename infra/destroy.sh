@@ -1,4 +1,21 @@
 #!/usr/bin/env bash
+# =============================================================================
+# destroy.sh — tear down the SOC lab AWS stack
+# =============================================================================
+# Run with the same admin/build identity used for build (not the Stratus user).
+# Order of operations:
+#   1) Resolve AWS credentials (same pattern as build.sh).
+#   2) Refuse if caller is the Stratus principal (wrong role for teardown).
+#   3) Empty all lab S3 buckets (versioned deletes) so terraform can destroy them.
+#   4) Optionally keep Splunk/Stratus IAM users by removing them from state only,
+#      or delete access keys so Terraform can destroy the users.
+#   5) terraform destroy
+#
+# Usage:
+#   ./destroy.sh
+#   ./destroy.sh --keep-iam-users | --delete-iam-users
+#   ./destroy.sh --help
+# =============================================================================
 set -euo pipefail
 
 KEEP_IAM_USERS=""
@@ -133,25 +150,22 @@ if [[ -z "${AWS_ACCESS_KEY_ID:-}" || -z "${AWS_SECRET_ACCESS_KEY:-}" ]]; then
   fi
 fi
 
+# Stratus profile is for simulations; teardown must use admin/build credentials.
 CALLER_ARN="$(aws sts get-caller-identity --query Arn --output text 2>/dev/null || true)"
 if [[ "$CALLER_ARN" == *"soc-lab-stratus"* ]]; then
   echo "Destroy is running as soc-lab-stratus. Use your build/admin profile instead."
   exit 1
 fi
 
-# ---------------------------------------------------------------------------
-# Collect bucket names to empty
-# ---------------------------------------------------------------------------
-# Pull bucket names directly from Terraform outputs so the list stays correct
-# regardless of the project_name variable. Fall back to the state scan only
-# for any bucket outputs that may not yet be defined.
-# ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# S3: empty buckets before destroy (AWS cannot delete non-empty buckets).
+# Prefer terraform output names; merge with state scan for any bucket in state.
+# -----------------------------------------------------------------------------
 collect_buckets_from_outputs() {
   local names=()
   local val
   for key in cloudtrail_bucket_name config_bucket_name vpc_flow_logs_bucket_name; do
     val="$(terraform output -raw "$key" 2>/dev/null || true)"
-    # Skip empty, "null" (Terraform literal), or whitespace-only values.
     if [[ -n "$val" && "$val" != "null" ]]; then
       names+=("$val")
     fi
@@ -186,6 +200,7 @@ mapfile -t BUCKETS < <(
   } | sort -u
 )
 
+# Delete all object versions and delete markers in batches (required for versioned buckets).
 empty_bucket() {
   local bucket="$1"
   echo "  $bucket ..."
@@ -233,6 +248,9 @@ else
   echo "No bucket outputs in state (already destroyed or not applied)."
 fi
 
+# -----------------------------------------------------------------------------
+# IAM: keep users/keys for rebuilds (state rm only) or delete keys so destroy can remove users.
+# -----------------------------------------------------------------------------
 if [[ -z "$KEEP_IAM_USERS" ]]; then
   read -r -p "Keep IAM users and access keys for Splunk/Stratus? (yes/no, default: yes): " PRESERVE
   PRESERVE="${PRESERVE,,}"

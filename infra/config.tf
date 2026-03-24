@@ -1,4 +1,14 @@
-# AWS Config recorder and delivery to the Config bucket (when enable_config = true).
+# -----------------------------------------------------------------------------
+# AWS Config: recorder, delivery channel, IAM role, bucket policy
+# -----------------------------------------------------------------------------
+# When enable_config is true, Config records resource configuration and delivers
+# change snapshots to the Config S3 bucket under prefix "config/".
+#
+# Order: recorder and delivery channel must exist before the recorder can be
+# started (configuration_recorder_status). The IAM role lets Config assume
+# roles to read resources and write to S3; inline policies replace or augment
+# AWS managed ConfigRole where needed for this module layout.
+# -----------------------------------------------------------------------------
 
 resource "aws_config_configuration_recorder" "main" {
   count = var.enable_config ? 1 : 0
@@ -50,6 +60,7 @@ resource "aws_iam_role" "config" {
   })
 }
 
+# Allows Config to write objects with bucket-owner-full-control ACL.
 resource "aws_iam_role_policy" "config" {
   count = var.enable_config ? 1 : 0
 
@@ -81,7 +92,7 @@ resource "aws_iam_role_policy" "config" {
   })
 }
 
-# Recorder/delivery API permissions (inline instead of AWS managed ConfigRole where needed).
+# Recorder and delivery API calls (scoped config:* actions).
 resource "aws_iam_role_policy" "config_recorder" {
   count = var.enable_config ? 1 : 0
 
@@ -100,6 +111,7 @@ resource "aws_iam_role_policy" "config_recorder" {
   })
 }
 
+# Bucket policy: Config service must list bucket, get ACL, and put objects.
 resource "aws_s3_bucket_policy" "config" {
   count = var.enable_config ? 1 : 0
 

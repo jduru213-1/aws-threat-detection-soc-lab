@@ -1,4 +1,18 @@
-# Per-bucket SQS queues + S3 ObjectCreated notifications for Splunk SQS-based S3 inputs.
+# -----------------------------------------------------------------------------
+# SQS + S3 notifications for Splunk “SQS-based S3” inputs
+# -----------------------------------------------------------------------------
+# When a new log object lands in a bucket, S3 sends a message to that source’s
+# queue. The Splunk Add-on polls SQS, reads the S3 key from the message, and
+# fetches the object. This scales better than scanning the whole bucket
+# on a timer.
+#
+# Each source has: main queue + DLQ (failed messages after maxReceiveCount),
+# queue policy allowing only that bucket’s ARN to SendMessage, and
+# aws_s3_bucket_notification for s3:ObjectCreated:*.
+#
+# Visibility timeout (300s) should be ≥ Splunk’s processing time for a batch
+# to avoid duplicate visibility.
+# -----------------------------------------------------------------------------
 
 resource "aws_sqs_queue" "cloudtrail_s3_events_dlq" {
   count = var.enable_sqs_s3_inputs ? 1 : 0
@@ -57,6 +71,8 @@ resource "aws_sqs_queue" "vpcflow_s3_events" {
   })
 }
 
+# Restrict SendMessage to the matching bucket ARN (prevents other buckets from
+# spamming the queue).
 resource "aws_sqs_queue_policy" "cloudtrail_s3_events" {
   count = var.enable_sqs_s3_inputs ? 1 : 0
 
@@ -149,4 +165,3 @@ resource "aws_s3_bucket_notification" "vpcflow_to_sqs" {
 
   depends_on = [aws_sqs_queue_policy.vpcflow_s3_events]
 }
-

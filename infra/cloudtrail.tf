@@ -1,4 +1,14 @@
-# CloudTrail → S3. Trail is single-region; global service events enabled.
+# -----------------------------------------------------------------------------
+# CloudTrail trail and bucket policy
+# -----------------------------------------------------------------------------
+# CloudTrail writes API audit logs to the CloudTrail bucket. AWS requires:
+#   - s3:GetBucketAcl on the bucket (service checks ACL before PutObject)
+#   - s3:PutObject on bucket/* with aws:SourceAccount and x-amz-acl conditions
+#
+# Trail: single-region in this lab; include_global_service_events captures
+# control-plane events such as IAM in the home region. Log file validation
+# enables digest files for tamper detection.
+# -----------------------------------------------------------------------------
 
 resource "aws_s3_bucket_policy" "cloudtrail" {
   bucket = aws_s3_bucket.cloudtrail.id

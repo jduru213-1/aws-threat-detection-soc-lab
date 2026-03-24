@@ -1,4 +1,13 @@
-# Default VPC flow logs to S3 (requires default VPC in the region).
+# -----------------------------------------------------------------------------
+# VPC Flow Logs → S3 (default VPC)
+# -----------------------------------------------------------------------------
+# Flow logs capture accepted/rejected traffic at ENI level. Destination type
+# S3 uses the delivery.logs.amazonaws.com service to write objects (no IAM role
+# on the flow log resource for S3 destinations).
+#
+# Requires the default VPC in this region. If your account has no default VPC,
+# set enable_vpc_flow_logs = false or create a default VPC first.
+# -----------------------------------------------------------------------------
 
 data "aws_vpc" "default" {
   count   = var.enable_vpc_flow_logs ? 1 : 0
@@ -18,6 +27,7 @@ resource "aws_flow_log" "main" {
   }
 }
 
+# Allow delivery.logs.amazonaws.com to read ACL and write gzip flow log files.
 resource "aws_s3_bucket_policy" "vpc_flow_logs" {
   count = var.enable_vpc_flow_logs ? 1 : 0
 

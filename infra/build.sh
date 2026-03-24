@@ -1,4 +1,20 @@
 #!/usr/bin/env bash
+# =============================================================================
+# build.sh — apply Terraform for the SOC lab AWS stack
+# =============================================================================
+# Runs from the directory that contains versions.tf (this script may live in
+# repo root or under infra/; INFRA_DIR is resolved automatically).
+#
+# Flow: check CLI tools → load optional .env.soc-lab-admin → resolve AWS
+# credentials (env, profile soc-lab-admin, or prompt) → terraform init →
+# optionally import pre-existing IAM users/keys → plan → apply → print outputs
+# → write .env.splunk and .env.stratus at repo root for Splunk / Stratus.
+#
+# Usage:
+#   ./build.sh
+#   ./build.sh --auto-approve    # apply without typing 'yes' at apply
+#   ./build.sh --skip-apply      # stop after plan (run: terraform apply tfplan)
+# =============================================================================
 set -euo pipefail
 
 AUTO_APPROVE=false
@@ -15,6 +31,7 @@ for arg in "$@"; do
   esac
 done
 
+# Resolve infra directory: supports running as ./infra/build.sh or ./build.sh from repo root.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [[ -f "$SCRIPT_DIR/versions.tf" ]]; then
   INFRA_DIR="$SCRIPT_DIR"
@@ -24,6 +41,9 @@ fi
 cd "$INFRA_DIR"
 echo "Working directory: $INFRA_DIR"
 
+# -----------------------------------------------------------------------------
+# Helpers: open docs in browser; ensure aws/terraform/python exist (winget on Windows optional)
+# -----------------------------------------------------------------------------
 open_link() {
   local url="$1"
   if command -v powershell.exe >/dev/null 2>&1; then
@@ -73,6 +93,7 @@ ensure_cmd python "Python 3" "https://www.python.org/downloads/"
 REPO_ROOT="$(cd "$INFRA_DIR/.." && pwd)"
 ADMIN_ENV_FILE="$REPO_ROOT/.env.soc-lab-admin"
 
+# Simple KEY=value loader (supports BOM and CRLF). Optional file for CI or repeated runs.
 load_admin_env() {
   local env_file="$1"
   [[ -f "$env_file" ]] || return 0
@@ -88,6 +109,7 @@ load_admin_env() {
   done < "$env_file"
 }
 
+# Map SOC_LAB_ADMIN_* into standard AWS_* / TF_VAR_aws_region when present.
 if [[ -f "$ADMIN_ENV_FILE" ]]; then
   load_admin_env "$ADMIN_ENV_FILE"
   [[ -n "${SOC_LAB_ADMIN_AWS_ACCESS_KEY_ID:-}" ]] && export AWS_ACCESS_KEY_ID="$SOC_LAB_ADMIN_AWS_ACCESS_KEY_ID"
@@ -99,6 +121,7 @@ fi
 
 LAB_PROFILE="${LAB_PROFILE:-soc-lab-admin}"
 
+# If access keys are not in the environment, try default credential chain, then profile soc-lab-admin.
 if [[ -z "${AWS_ACCESS_KEY_ID:-}" || -z "${AWS_SECRET_ACCESS_KEY:-}" ]]; then
   if ! aws sts get-caller-identity >/dev/null 2>&1; then
     if aws sts get-caller-identity --profile "$LAB_PROFILE" >/dev/null 2>&1; then
@@ -108,6 +131,7 @@ if [[ -z "${AWS_ACCESS_KEY_ID:-}" || -z "${AWS_SECRET_ACCESS_KEY:-}" ]]; then
   fi
 fi
 
+# Last resort: prompt and persist under soc-lab-admin so destroy/build can reuse.
 if [[ -z "${AWS_ACCESS_KEY_ID:-}" || -z "${AWS_SECRET_ACCESS_KEY:-}" ]]; then
   if ! aws sts get-caller-identity >/dev/null 2>&1; then
     echo "[AWS] No credentials found. Enter your AWS credentials."
@@ -133,11 +157,8 @@ fi
 terraform version
 echo
 
-# ---------------------------------------------------------------------------
-# Always run terraform init so the lock file and installed providers stay
-# consistent with versions.tf. -upgrade=false means existing provider
-# versions are reused; it will still detect and fix a stale or missing cache.
-# ---------------------------------------------------------------------------
+# Always run init: keeps .terraform providers aligned with .terraform.lock.hcl and versions.tf.
+# -upgrade=false avoids bumping provider versions on every run.
 echo "[Build] terraform init (lock-file consistent)..."
 terraform init -input=false -upgrade=false
 echo
@@ -156,6 +177,10 @@ import_if_missing() {
   fi
 }
 
+# -----------------------------------------------------------------------------
+# Drift recovery: if IAM users already exist in AWS (e.g. partial apply) but are
+# absent from state, import them so apply does not fail on "already exists".
+# -----------------------------------------------------------------------------
 PROJECT_NAME="soc-lab"
 SPLUNK_USER="${PROJECT_NAME}-splunk-addon"
 STRATUS_USER="${PROJECT_NAME}-stratus"
@@ -199,6 +224,11 @@ echo "=== Build complete ==="
 terraform output
 echo
 
+# -----------------------------------------------------------------------------
+# Write git-ignored env files for local tooling (Splunk add-on keys, Stratus).
+# Stratus file includes STRATUS_AWS_REGION so attacks/configure-stratus.sh does
+# not need terraform output when the region is already known from apply.
+# -----------------------------------------------------------------------------
 TF_JSON="$(terraform output -json 2>/dev/null || true)"
 if [[ -n "$TF_JSON" ]]; then
   python - "$REPO_ROOT" "$TF_JSON" <<'PY'
@@ -237,8 +267,6 @@ if stratus_key and stratus_secret:
         f"STRATUS_AWS_ACCESS_KEY_ID={stratus_key}",
         f"STRATUS_AWS_SECRET_ACCESS_KEY={stratus_secret}",
     ]
-    # Write the deployed region so configure-stratus.sh can read it
-    # without needing Terraform to be initialised in the attacks/ shell.
     if region:
         lines.append(f"STRATUS_AWS_REGION={region}")
     write_env(os.path.join(repo_root, ".env.stratus"), lines)
