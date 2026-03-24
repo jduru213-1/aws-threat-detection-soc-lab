@@ -83,9 +83,24 @@ ensure_cmd python "Python 3" "https://www.python.org/downloads/"
 REPO_ROOT="$(cd "$INFRA_DIR/.." && pwd)"
 ADMIN_ENV_FILE="$REPO_ROOT/.env.soc-lab-admin"
 
+load_admin_env() {
+  local env_file="$1"
+  [[ -f "$env_file" ]] || return 0
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    # Remove UTF-8 BOM if present and trim CR from CRLF files.
+    line="${line//$'\ufeff'/}"
+    line="${line%$'\r'}"
+    [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+    if [[ "$line" =~ ^[[:space:]]*([A-Za-z_][A-Za-z0-9_]*)=(.*)$ ]]; then
+      local key="${BASH_REMATCH[1]}"
+      local val="${BASH_REMATCH[2]}"
+      export "$key=$val"
+    fi
+  done < "$env_file"
+}
+
 if [[ -f "$ADMIN_ENV_FILE" ]]; then
-  # shellcheck disable=SC1090
-  source "$ADMIN_ENV_FILE"
+  load_admin_env "$ADMIN_ENV_FILE"
   [[ -n "${SOC_LAB_ADMIN_AWS_ACCESS_KEY_ID:-}" ]] && export AWS_ACCESS_KEY_ID="$SOC_LAB_ADMIN_AWS_ACCESS_KEY_ID"
   [[ -n "${SOC_LAB_ADMIN_AWS_SECRET_ACCESS_KEY:-}" ]] && export AWS_SECRET_ACCESS_KEY="$SOC_LAB_ADMIN_AWS_SECRET_ACCESS_KEY"
   [[ -n "${SOC_LAB_ADMIN_AWS_PROFILE:-}" ]] && export AWS_PROFILE="$SOC_LAB_ADMIN_AWS_PROFILE"
