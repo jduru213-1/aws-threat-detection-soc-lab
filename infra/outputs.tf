@@ -51,21 +51,21 @@ output "splunk_iam_secret_key" {
 }
 
 # -----------------------------------------------------------------------------
-# Stratus Red Team credentials (dedicated user, always created)
+# Stratus Red Team credentials
 # -----------------------------------------------------------------------------
 
 output "stratus_iam_user_arn" {
   description = "IAM user ARN for Stratus Red Team (attack simulation)"
-  value       = aws_iam_user.stratus.arn
+  value       = var.create_stratus_iam_user ? aws_iam_user.stratus[0].arn : null
 }
 
 output "stratus_iam_access_key_id" {
   description = "Access key ID for Stratus IAM user"
-  value       = aws_iam_access_key.stratus.id
+  value       = var.create_stratus_iam_user ? aws_iam_access_key.stratus[0].id : null
 }
 
 output "stratus_iam_secret_key" {
   description = "Secret access key for Stratus IAM user (use in a dedicated profile or .env, not committed)"
-  value       = aws_iam_access_key.stratus.secret
+  value       = var.create_stratus_iam_user ? aws_iam_access_key.stratus[0].secret : null
   sensitive   = true
 }

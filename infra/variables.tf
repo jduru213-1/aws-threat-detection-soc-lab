@@ -82,6 +82,18 @@ variable "create_splunk_iam_user" {
 }
 
 # -----------------------------------------------------------------------------
+# create_stratus_iam_user
+# -----------------------------------------------------------------------------
+# When true, creates a dedicated IAM user + access key for Stratus Red Team.
+# Set false if you want to manage this user outside Terraform.
+# -----------------------------------------------------------------------------
+variable "create_stratus_iam_user" {
+  description = "Create IAM user for Stratus Red Team"
+  type        = bool
+  default     = true
+}
+
+# -----------------------------------------------------------------------------
 # enable_sqs_s3_inputs
 # -----------------------------------------------------------------------------
 # When true, creates SQS queues and S3 bucket notifications for SQS-based S3

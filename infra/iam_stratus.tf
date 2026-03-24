@@ -5,10 +5,12 @@
 // techniques in the lab. Permissions are intentionally minimal; attach
 // additional AWS managed policies if you need broader coverage (e.g.
 // SecurityAudit, ReadOnlyAccess). Credentials are written to .env.stratus by
-// build.ps1 (git-ignored).
+// build.ps1.
 // =============================================================================
 
 resource "aws_iam_user" "stratus" {
+  count = var.create_stratus_iam_user ? 1 : 0
+
   name = "${var.project_name}-stratus"
   path = "/"
 
@@ -20,6 +22,8 @@ resource "aws_iam_user" "stratus" {
 }
 
 resource "aws_iam_access_key" "stratus" {
-  user = aws_iam_user.stratus.name
+  count = var.create_stratus_iam_user ? 1 : 0
+
+  user = aws_iam_user.stratus[0].name
 }
 
