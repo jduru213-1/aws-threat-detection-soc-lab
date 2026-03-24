@@ -10,6 +10,7 @@ __pycache__/
 *.pyo
 *.pyd
 *.egg-info/
+# Secrets at repo root (.env.splunk, .env.stratus, .env.soc-lab-admin, …)
 .env
 .env.*
 .venv/
