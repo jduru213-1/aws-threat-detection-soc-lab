@@ -1,15 +1,15 @@
-# 🔌 Splunk Add-on for AWS
+# Splunk Add-on for AWS
 
-Step 1: 📥 Download the Splunk Add-on for AWS from [Splunkbase](https://splunkbase.splunk.com/app/1876/).
+Use this add-on to bring AWS telemetry into Splunk.
 
-Step 2: 📁 (Optional) Put the downloaded `.tgz` file in this folder.
+## Install
 
-Step 3: ⚙️ In Splunk, install the add-on:
-- Go to **Apps → Manage Apps → Install app from file**
-- Upload the `.tgz`
-- Restart Splunk
+1. Download from [Splunkbase](https://splunkbase.splunk.com/app/1876/).
+2. In Splunk, go to **Apps -> Manage Apps -> Install app from file**.
+3. Upload the `.tgz` package and restart Splunk.
 
-Step 4: 📘 Follow the full install and input configuration walkthrough:
-- [guides/step-by-step.md](../../guides/step-by-step.md)
+## Next step
 
-Note: 📝 The add-on package is not stored in this repo; download it from Splunkbase.
+Follow the guided input setup here: `../../guides/step-by-step.md`
+
+Note: the add-on package itself is not stored in this repository.

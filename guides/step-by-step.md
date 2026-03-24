@@ -6,7 +6,7 @@ Skip steps you’ve already done. For more depth, see the project’s Medium blo
 
 ## Requirements
 
-Docker Desktop · Python 3.10+ · AWS account · PowerShell · `aws configure` (so build doesn’t keep prompting)
+Docker Desktop · Python 3.10+ · AWS account · Bash shell · `aws configure` (so build doesn’t keep prompting)
 
 ---
 
@@ -43,15 +43,15 @@ Inputs come in Step 5.
 
 ## 4. Build AWS
 
-```powershell
+```bash
 cd infra
-.\build.ps1
+./build.sh
 ```
 
 Confirm with `yes`. **Save from output:** bucket names, `soc-lab-splunk-addon` access key + secret.
 
 - Credentials: `aws configure` to stop repeated prompts.
-- Blocked script: `powershell -ExecutionPolicy Bypass -File .\build.ps1`
+- If command fails with permission denied: `chmod +x ./build.sh` then rerun.
 
 ---
 
@@ -66,7 +66,7 @@ Confirm with `yes`. **Save from output:** bucket names, `soc-lab-splunk-addon` a
 | Config | config SQS queue | `aws_config` |
 | VPC Flow Logs | vpcflow SQS queue | `aws_vpcflow` |
 
-Queues are printed by `build.ps1` (and defined in `infra/outputs_sqs.tf`). The Splunk add-on IAM user already has SQS permissions via Terraform.
+Queues are printed by `build.sh` (and defined in `infra/outputs_sqs.tf`). The Splunk add-on IAM user already has SQS permissions via Terraform.
 
 Verify: `index=aws_cloudtrail earliest=-30m` (and `aws_config`, `aws_vpcflow`). Wait and retry if empty.
 
@@ -74,7 +74,7 @@ Verify: `index=aws_cloudtrail earliest=-30m` (and `aws_config`, `aws_vpcflow`). 
 
 ## 6. Red team (Stratus)
 
-Use [attacks/README.md](attacks/README.md): `cd attacks` → `.\configure-stratus.ps1` → `stratus list --platform aws` and `stratus detonate <id> --cleanup`. Events show in CloudTrail → Splunk.
+Use [attacks/README.md](attacks/README.md): `cd attacks` -> `source ./configure-stratus.sh` -> `stratus list --platform aws` and `stratus detonate <id> --cleanup`. Events show in CloudTrail -> Splunk.
 
 ---
 
@@ -92,9 +92,9 @@ Example Splunk searches:
 
 ## Cleanup
 
-```powershell
+```bash
 cd infra
-.\destroy.ps1
+./destroy.sh
 ```
 
 Use **build credentials** (not Stratus). Confirm with `yes`.
@@ -105,6 +105,6 @@ Use **build credentials** (not Stratus). Confirm with `yes`.
 
 | Issue | Fix |
 |-------|-----|
-| Script blocked | `powershell -ExecutionPolicy Bypass -File .\build.ps1` |
+| Script blocked | `chmod +x ./build.sh && ./build.sh` |
 | SQS / add-on errors | Use plain S3 inputs; clear Assume Role in AWS Account config |
 | Destroy fails (AccessDenied) | Run destroy in a terminal where you haven’t set Stratus profile; use same creds as build |

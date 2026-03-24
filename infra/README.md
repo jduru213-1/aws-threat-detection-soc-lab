@@ -1,43 +1,43 @@
-# Infra (AWS)
+# Infra
 
-**Up:** `./build.sh` - guided build flow with credential/tooling safeguards.  
-**Down:** `./destroy.sh` - empties buckets then destroys (supports `--keep-iam-users`).
+This folder creates and tears down the AWS side of the lab.
 
-**Created:** S3 buckets, CloudTrail, AWS Config, VPC Flow Logs, Splunk IAM user, Stratus IAM user, and optional SQS ingestion resources.
+## Recommended way
 
-## Raw Terraform Quickstart
+- Build: `./build.sh`
+- Destroy: `./destroy.sh`
 
-Use this if you want direct Terraform commands instead of wrapper scripts.
+These scripts are the easiest path because they include prompts, checks, and safer defaults.
+
+## What gets created
+
+- S3 buckets for telemetry
+- CloudTrail, AWS Config, and VPC Flow Logs integrations
+- IAM user for Splunk ingestion
+- IAM user for Stratus simulation
+- Optional SQS resources for S3-to-Splunk ingestion
+
+## Raw Terraform (manual option)
+
+If you prefer to run Terraform commands directly:
 
 ```bash
 cd infra
 
-# Choose credential method A: saved AWS profile
+# Use a saved AWS profile (recommended)
 export AWS_PROFILE=soc-lab-admin
 export AWS_REGION=us-east-1
 
-# OR credential method B: direct access keys
-# export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
-# export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
-# export AWS_REGION=us-east-1
-
-# Verify your shell can authenticate to AWS
+# Confirm credentials are valid
 aws sts get-caller-identity
 
-# Initialize providers and backend metadata
+# Build
 terraform init
-
-# Preview planned infrastructure changes and save plan to file
 terraform plan -out=tfplan
-
-# Apply exactly what was planned in tfplan
 terraform apply tfplan
 
-# Show output values (bucket names, IAM outputs, etc.)
-terraform output
-
-# Later: destroy all Terraform-managed infrastructure
+# Teardown later
 terraform destroy
 ```
 
-If you prefer guard rails and prompts, use `./build.sh` and `./destroy.sh`.
+Use raw Terraform only if you want full manual control.
