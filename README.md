@@ -20,18 +20,17 @@ This diagram shows the end-to-end workflow: AWS telemetry is collected, stored, 
 
 ![Architecture: AWS to S3 (optional SQS) to Splunk Docker](https://github.com/user-attachments/assets/c65afbe7-7817-4510-8017-30ffeb521446)
 
-1. CloudTrail / AWS Config / VPC Flow Logs write objects to S3
-2. S3 sends ObjectCreated notifications to SQS queues (provisioned by Terraform)
-3. Splunk Add-on polls SQS, reads messages, fetches referenced S3 objects
-4. Events are written to Splunk indexes (`aws_*`)
+1. AWS telemetry sources (CloudTrail, AWS Config, and VPC Flow Logs) deliver log objects to Amazon S3.
+2. Amazon S3 publishes `ObjectCreated` notifications to Amazon SQS queues provisioned by Terraform.
+3. The Splunk Add-on for AWS polls SQS, processes each message, and retrieves the referenced S3 objects.
+4. Parsed events are indexed in Splunk under the `aws_*` indexes.
 
 ---
 
 ## Table of contents
 - [Quick Project Snapshot](#quick-project-snapshot)
 - [Architecture](#architecture)
-- [Overview](#overview)
-- [Portfolio outcomes](#portfolio-outcomes)
+- [What this project delivers](#what-this-project-delivers)
 - [Components](#components)
 - [Prerequisites](#prerequisites)
 - [Quick start](#quick-start-end-to-end)
@@ -41,18 +40,11 @@ This diagram shows the end-to-end workflow: AWS telemetry is collected, stored, 
 
 ---
 
-## Overview
-This repo is structured as a full SOC practice loop:
-1. Build cloud telemetry infrastructure with Terraform.
-2. Ingest logs into Splunk and normalize into dedicated indexes.
-3. Simulate attacker behavior with Stratus Red Team.
-4. Validate detections and investigations against real generated events.
-
-## Portfolio outcomes
-- Built a repeatable AWS telemetry pipeline for SOC practice.
-- Implemented SQS-based ingestion from S3 into Splunk.
-- Validated detections with controlled Stratus Red Team simulations.
-- Documented a workflow that is easy to rebuild and demonstrate.
+## What this project delivers
+- A repeatable AWS telemetry lab built with Terraform.
+- A clean ingestion path from S3 and SQS into Splunk indexes.
+- Controlled Stratus simulations to test detections against real events.
+- A practical SOC workflow you can rebuild, run, and showcase.
 
 ## Components
 | Component | What it does | Where |
@@ -97,13 +89,14 @@ cd infra
 Save the bucket names and the Splunk IAM key + secret printed by the script.
 
 ### 5) Configure ingestion in Splunk Add-on (SQS-based S3)
-In the Splunk Add-on:
-- Configuration -> AWS Account: paste the Splunk IAM key and secret from Step 4.
-- Inputs -> create three SQS-based S3 inputs:
-  - CloudTrail queue (from Terraform outputs) → index `aws_cloudtrail`
-  - Config queue (from Terraform outputs) → index `aws_config`
-  - VPC Flow Logs queue (from Terraform outputs) → index `aws_vpcflow`
-Note: Terraform prints SQS queue URLs/ARNs after `build.sh` (see also `infra/outputs_sqs.tf`).
+In the Splunk Add-on for AWS:
+- Go to **Configuration -> AWS Account** and paste the Splunk IAM access key and secret from Step 4.
+- Go to **Inputs** and create three **SQS-based S3** inputs:
+  - CloudTrail queue -> index `aws_cloudtrail`
+  - Config queue -> index `aws_config`
+  - VPC Flow Logs queue -> index `aws_vpcflow`
+
+Terraform prints the SQS queue URLs and ARNs after `./build.sh` (see `infra/outputs_sqs.tf`).
 
 ### 6) Run Stratus Red Team
 ```bash
