@@ -45,27 +45,27 @@ A full step-by-step walkthrough is in [`guides/step-by-step.md`](guides/step-by-
 - `aws configure` set up,
 - Bash terminal.
 
-# 1. Start Splunk
+### 1. Start Splunk
 ```bash
 cd soc && docker compose up -d
 # Open https://localhost:8000
 ```
-# 2. Create indexes
+### 2. Create indexes
 ```
 pip install splunk-sdk
 python ./scripts/setup_splunk.py --no-verify-tls
 ```
-# 3. Build AWS infrastructure
+### 3. Build AWS infrastructure
 ```
 cd infra && ./build.sh
 # Save the bucket names, SQS queue URLs, and IAM credentials from the output
 ```
-# 4. Install Splunk Add-on for AWS from Splunkbase, then configure:
+### 4. Install Splunk Add-on for AWS from Splunkbase, then configure:
 ```
 #    Configuration → AWS Account  →  paste soc-lab-splunk-addon keys
 #    Inputs → SQS-based S3        →  create inputs for each queue + index
 ```
-# 5. Verify data
+### 5. Verify data
 ```
 #    index=aws_cloudtrail earliest=-1h
 ```
