@@ -1,3 +1,5 @@
+# Per-bucket SQS queues + S3 ObjectCreated notifications for Splunk SQS-based S3 inputs.
+
 resource "aws_sqs_queue" "cloudtrail_s3_events_dlq" {
   count = var.enable_sqs_s3_inputs ? 1 : 0
 

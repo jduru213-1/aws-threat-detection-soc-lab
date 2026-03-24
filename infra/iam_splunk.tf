@@ -1,11 +1,4 @@
-# =============================================================================
-# IAM User for Splunk Add-on for AWS
-# =============================================================================
-# Creates an IAM user with an access key and policies that allow read-only
-# access to the CloudTrail, Config, and VPC Flow Logs S3 buckets. Use this
-# user's access key and secret in the Splunk Add-on for AWS when adding an
-# AWS account and configuring S3 inputs.
-# =============================================================================
+# IAM user for Splunk Add-on: read log buckets + SQS (when SQS inputs are enabled).
 
 resource "aws_iam_user" "splunk" {
   count = var.create_splunk_iam_user ? 1 : 0
@@ -18,7 +11,6 @@ resource "aws_iam_user" "splunk" {
   }
 }
 
-# Allow Splunk to read CloudTrail log objects and list the bucket (always).
 resource "aws_iam_user_policy" "splunk_cloudtrail" {
   count = var.create_splunk_iam_user ? 1 : 0
 
@@ -37,7 +29,6 @@ resource "aws_iam_user_policy" "splunk_cloudtrail" {
   })
 }
 
-# Allow Splunk to read Config objects when AWS Config is enabled.
 resource "aws_iam_user_policy" "splunk_config" {
   count = var.create_splunk_iam_user && var.enable_config ? 1 : 0
 
@@ -56,7 +47,6 @@ resource "aws_iam_user_policy" "splunk_config" {
   })
 }
 
-# Allow Splunk to read VPC Flow Logs objects when VPC Flow Logs are enabled.
 resource "aws_iam_user_policy" "splunk_vpcflow" {
   count = var.create_splunk_iam_user && var.enable_vpc_flow_logs ? 1 : 0
 
@@ -75,7 +65,6 @@ resource "aws_iam_user_policy" "splunk_vpcflow" {
   })
 }
 
-# Allow Splunk to consume SQS notifications for S3-based ingestion (optional).
 resource "aws_iam_user_policy" "splunk_sqs" {
   count = var.create_splunk_iam_user && var.enable_sqs_s3_inputs ? 1 : 0
 
@@ -98,7 +87,6 @@ resource "aws_iam_user_policy" "splunk_sqs" {
   })
 }
 
-# Access key for the Splunk add-on. Secret is in terraform output (sensitive).
 resource "aws_iam_access_key" "splunk" {
   count = var.create_splunk_iam_user ? 1 : 0
 

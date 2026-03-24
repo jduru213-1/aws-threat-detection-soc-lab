@@ -1,26 +1,11 @@
-# =============================================================================
-# CloudTrail Trail and S3 Bucket Policy
-# =============================================================================
-# CloudTrail records API calls in your account and writes log files to S3.
-# The bucket policy below allows the CloudTrail service to perform an ACL
-# check and to put objects; conditions restrict access to your account and
-# require bucket-owner-full-control to avoid ownership issues.
-# =============================================================================
+# CloudTrail → S3. Trail is single-region; global service events enabled.
 
-# -----------------------------------------------------------------------------
-# S3 bucket policy for CloudTrail
-# -----------------------------------------------------------------------------
-# AWS requires this policy so cloudtrail.amazonaws.com can write to the
-# bucket. Without it, the trail cannot deliver logs. Conditions ensure only
-# CloudTrail in your account can write.
-# -----------------------------------------------------------------------------
 resource "aws_s3_bucket_policy" "cloudtrail" {
   bucket = aws_s3_bucket.cloudtrail.id
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
-      # CloudTrail checks bucket ACL before writing (AWS requirement).
       {
         Sid       = "AWSCloudTrailAclCheck"
         Effect    = "Allow"
@@ -33,7 +18,6 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
           }
         }
       },
-      # CloudTrail writes log files; ACL condition is required by CloudTrail.
       {
         Sid       = "AWSCloudTrailWrite"
         Effect    = "Allow"
@@ -53,14 +37,6 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
   })
 }
 
-# -----------------------------------------------------------------------------
-# CloudTrail trail
-# -----------------------------------------------------------------------------
-# Single-region trail that logs to the S3 bucket above. include_global_service_
-# events captures IAM/STS etc. in the same region; enable_log_file_validation
-# enables digest verification. Depends on bucket policy so CloudTrail can
-# write immediately after creation.
-# -----------------------------------------------------------------------------
 resource "aws_cloudtrail" "main" {
   name                          = "${var.project_name}-trail"
   s3_bucket_name                = aws_s3_bucket.cloudtrail.id

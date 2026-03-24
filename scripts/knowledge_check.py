@@ -312,15 +312,15 @@ QUESTION_BANK: dict[Level, list[Question]] = {
             tags={TAG_SOC, TAG_TERRAFORM},
         ),
         Mcq(
-            prompt=f"You ran `attacks\\configure-stratus.sh` and now `destroy.sh` fails with AccessDenied. What's the most likely cause?",
+            prompt=f"You ran `attacks\\configure-stratus.sh` and now `destroy.sh` fails or refuses to run. What's the most likely cause?",
             options=[
                 "Docker isn't running",
                 "Terraform is not installed",
-                "You are still using the Stratus AWS profile/user, which lacks S3/Terraform permissions",
+                "You are still on the Stratus AWS profile; destroy must use the same build/admin identity that owns the lab",
                 "Splunk is offline",
             ],
             answer_index=2,
-            explanation="Stratus credentials are for attack simulation, not for teardown. Destroy must use build/admin creds.",
+            explanation="`configure-stratus.sh` sets `AWS_PROFILE` for simulations. Teardown should use your build/admin credentials (the script also blocks running destroy as the Stratus principal).",
             tags={TAG_STRATUS, TAG_TERRAFORM},
         ),
         Mcq(
@@ -351,24 +351,24 @@ QUESTION_BANK: dict[Level, list[Question]] = {
             prompt="Why should `infra\\destroy.sh` NOT be run with the Stratus profile/user active?",
             options=[
                 "Stratus is read-only and cannot query Splunk",
-                "The Stratus user is meant for attacks and lacks permissions to empty S3 buckets / destroy infra",
+                "Teardown should use the build/admin identity that created the lab; Stratus is reserved for attack simulation",
                 "Terraform cannot run in PowerShell",
                 "Destroy requires EC2 access keys",
             ],
             answer_index=1,
-            explanation="The Stratus user is intentionally limited; destroy requires build/admin credentials.",
+            explanation="Separation of roles: Stratus credentials are for simulations; destroy applies Terraform and should run under your lab admin credentials.",
             tags={TAG_STRATUS, TAG_TERRAFORM},
         ),
         Mcq(
             prompt="In the Splunk Add-on for AWS, what must you configure before inputs will work?",
             options=[
                 "Only the indexes; everything else is automatic",
-                "An AWS Account (keys) and then per-source S3 inputs",
+                "An AWS Account (keys) and then SQS-based S3 inputs for each queue",
                 "A CloudTrail trail ARN in Splunk settings",
                 "A GuardDuty detector ID and a KMS key ARN",
             ],
             answer_index=1,
-            explanation="You set AWS credentials under Configuration → AWS Account, then create inputs (CloudTrail/Config/VPC Flow).",
+            explanation="You set AWS credentials under Configuration → AWS Account, then create SQS-based S3 inputs for CloudTrail, Config, and VPC Flow (each with its queue and index).",
             tags={TAG_SPLUNK, TAG_AWS},
         ),
         Fill(
@@ -448,7 +448,7 @@ QUESTION_BANK: dict[Level, list[Question]] = {
         Fill(
             prompt="Fill in: Destroy should be run with the same credentials as ____ (build or stratus).",
             expected="build",
-            explanation="Destroy needs admin/build credentials; Stratus is intentionally not permitted to empty buckets/destroy infra.",
+            explanation="Destroy should run under your build/admin identity. Stratus is only for simulations, not for applying teardown.",
             tags={TAG_TERRAFORM, TAG_STRATUS},
         ),
         Mcq(

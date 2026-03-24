@@ -1,19 +1,5 @@
-# =============================================================================
-# AWS Config: Recorder and Delivery Channel to S3
-# =============================================================================
-# AWS Config records configuration changes and delivers snapshots/deltas to S3.
-# The recorder runs in the account; the delivery channel points to our Config
-# bucket. An IAM role allows Config to write to S3; the bucket policy allows
-# the Config service to write (both are required by AWS).
-# =============================================================================
+# AWS Config recorder and delivery to the Config bucket (when enable_config = true).
 
-# -----------------------------------------------------------------------------
-# Configuration recorder
-# -----------------------------------------------------------------------------
-# Records configuration for all supported resource types in the region,
-# including global resources (e.g. IAM). Must be started after the delivery
-# channel exists (see aws_config_configuration_recorder_status below).
-# -----------------------------------------------------------------------------
 resource "aws_config_configuration_recorder" "main" {
   count = var.enable_config ? 1 : 0
 
@@ -26,12 +12,6 @@ resource "aws_config_configuration_recorder" "main" {
   }
 }
 
-# -----------------------------------------------------------------------------
-# Delivery channel
-# -----------------------------------------------------------------------------
-# Tells Config where to deliver snapshot and incremental files (our S3 bucket).
-# The s3_key_prefix is a folder prefix inside the bucket.
-# -----------------------------------------------------------------------------
 resource "aws_config_delivery_channel" "main" {
   count = var.enable_config ? 1 : 0
 
@@ -42,12 +22,6 @@ resource "aws_config_delivery_channel" "main" {
   depends_on = [aws_config_configuration_recorder.main]
 }
 
-# -----------------------------------------------------------------------------
-# Recorder status: set to enabled
-# -----------------------------------------------------------------------------
-# The recorder is created in a stopped state. This resource turns it on so
-# Config actually starts recording. Must run after delivery channel is set.
-# -----------------------------------------------------------------------------
 resource "aws_config_configuration_recorder_status" "main" {
   count = var.enable_config ? 1 : 0
 
@@ -57,12 +31,6 @@ resource "aws_config_configuration_recorder_status" "main" {
   depends_on = [aws_config_delivery_channel.main]
 }
 
-# -----------------------------------------------------------------------------
-# IAM role for AWS Config
-# -----------------------------------------------------------------------------
-# Config assumes this role to write to S3 and to describe resources. The
-# managed policy ConfigRole grants permissions to describe resource types.
-# -----------------------------------------------------------------------------
 resource "aws_iam_role" "config" {
   count = var.enable_config ? 1 : 0
 
@@ -82,7 +50,6 @@ resource "aws_iam_role" "config" {
   })
 }
 
-# Inline policy: allow Config to put objects and set ACL on the Config bucket.
 resource "aws_iam_role_policy" "config" {
   count = var.enable_config ? 1 : 0
 
@@ -114,8 +81,7 @@ resource "aws_iam_role_policy" "config" {
   })
 }
 
-# Inline policy: Config recorder needs these to describe resources and deliver snapshots.
-# (Replaces managed policy ConfigRole which may not exist in all partitions/accounts.)
+# Recorder/delivery API permissions (inline instead of AWS managed ConfigRole where needed).
 resource "aws_iam_role_policy" "config_recorder" {
   count = var.enable_config ? 1 : 0
 
@@ -134,13 +100,6 @@ resource "aws_iam_role_policy" "config_recorder" {
   })
 }
 
-# -----------------------------------------------------------------------------
-# S3 bucket policy for AWS Config
-# -----------------------------------------------------------------------------
-# Config requires the bucket to allow config.amazonaws.com to get ACL, list
-# bucket, and put objects (with bucket-owner-full-control). Without this,
-# delivery will fail.
-# -----------------------------------------------------------------------------
 resource "aws_s3_bucket_policy" "config" {
   count = var.enable_config ? 1 : 0
 

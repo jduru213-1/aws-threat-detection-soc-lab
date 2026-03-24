@@ -21,7 +21,7 @@ cd soc
 docker compose up -d
 ```
 
-Open `https://localhost:8000`, sign in as `admin`, and use the password in `soc/.env` (or the Docker Compose default).
+Open `https://localhost:8000`, sign in as `admin`. The default password is `ChangeMe123!` (see `soc/docker-compose.yml`). You can override it with a `soc/.env` file next to the compose file if you use one.
 
 ---
 

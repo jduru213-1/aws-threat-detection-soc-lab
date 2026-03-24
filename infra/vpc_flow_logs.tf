@@ -1,31 +1,10 @@
-# =============================================================================
-# VPC Flow Logs to S3 (Default VPC)
-# =============================================================================
-# VPC Flow Logs capture accepted/rejected traffic at the network interface
-# level. When destination is S3, AWS uses the delivery.logs.amazonaws.com
-# service to write to the bucket (no IAM role needed for S3 destination).
-# This configuration uses the default VPC in the region.
-# =============================================================================
+# Default VPC flow logs to S3 (requires default VPC in the region).
 
-# -----------------------------------------------------------------------------
-# Default VPC data source
-# -----------------------------------------------------------------------------
-# Look up the default VPC in the selected region. If your account has no
-# default VPC (e.g. in some newer accounts), set enable_vpc_flow_logs = false
-# or create a default VPC first.
-# -----------------------------------------------------------------------------
 data "aws_vpc" "default" {
   count   = var.enable_vpc_flow_logs ? 1 : 0
   default = true
 }
 
-# -----------------------------------------------------------------------------
-# VPC Flow Log resource
-# -----------------------------------------------------------------------------
-# log_destination_type = "s3" and log_destination = bucket ARN send logs
-# directly to S3. traffic_type = "ALL" logs both accepted and rejected
-# traffic. For CloudWatch Logs you would use an IAM role instead.
-# -----------------------------------------------------------------------------
 resource "aws_flow_log" "main" {
   count = var.enable_vpc_flow_logs ? 1 : 0
 
@@ -39,14 +18,6 @@ resource "aws_flow_log" "main" {
   }
 }
 
-# -----------------------------------------------------------------------------
-# S3 bucket policy for VPC Flow Logs delivery
-# -----------------------------------------------------------------------------
-# When destination is S3, the delivery.logs.amazonaws.com service writes
-# flow log files. This policy allows that service to get bucket ACL and
-# put objects; conditions restrict to your account and require
-# bucket-owner-full-control.
-# -----------------------------------------------------------------------------
 resource "aws_s3_bucket_policy" "vpc_flow_logs" {
   count = var.enable_vpc_flow_logs ? 1 : 0
 
