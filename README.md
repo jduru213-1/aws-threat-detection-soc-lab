@@ -10,7 +10,7 @@ I originally built this lab to strengthen my understanding of cloud-based threat
 
 ---
 
-## 🗺️ Architecture Overview
+### 🗺️ Architecture Overview
 
 ![Architecture: AWS telemetry to S3 to SQS to Splunk](https://github.com/user-attachments/assets/c65afbe7-7817-4510-8017-30ffeb521446)
 
@@ -23,7 +23,7 @@ I originally built this lab to strengthen my understanding of cloud-based threat
 
 ---
 
-## ⚙️ What This Lab Builds
+### ⚙️ What This Lab Builds
 
 | Component | What it does |
 |---|---|
@@ -36,7 +36,7 @@ I originally built this lab to strengthen my understanding of cloud-based threat
 
 ---
 
-## 🚀 Quick start
+### 🚀 Quick start
 
 > For a detailed walkthrough, see [`guides/step-by-step.md`](guides/step-by-step.md), with additional context in the Medium blog.
 
@@ -74,7 +74,7 @@ cd infra && ./build.sh
 
 ---
 
-## 🎯 Running Threat Simulations
+### 🎯 Running Threat Simulations
 
 ```bash
 cd attacks
@@ -88,7 +88,7 @@ stratus detonate <technique-id> --cleanup
 
 ---
 
-## 🔍 Detection examples
+### 🔍 Detection examples
 
 ```spl
 # Failed console logins
@@ -106,7 +106,7 @@ index=aws_cloudtrail eventName=CreateAccessKey
 
 ---
 
-## 🧹 Teardown
+### 🧹 Teardown
 
 ```bash
 cd infra && ./destroy.sh
@@ -117,7 +117,7 @@ You will also be prompted to decide whether to retain IAM users if you intend to
 
 ---
 
-## 📁 Repo layout
+### 📁 Repo layout
 
 ```
 infra/        Terraform + build.sh + destroy.sh
