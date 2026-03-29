@@ -46,9 +46,9 @@ For a detailed walkthrough with troubleshooting tips, see [`guides/step-by-step.
 
 **Prerequisites**
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [Python 3.10+](https://www.python.org/downloads/)
-- [Bash (Git Bash on Windows)](https://git-scm.com/download/win)
+- Docker Desktop
+- Python 3.10+
+- Bash (Git Bash on Windows)
 - AWS Account (AdministratorAccess)
 
 ### 1. Start Splunk

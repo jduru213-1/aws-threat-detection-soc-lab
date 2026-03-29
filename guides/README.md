@@ -4,7 +4,7 @@ The full lab walkthrough is in **[step-by-step.md](step-by-step.md)** (prerequis
 
 | Section | What you do there |
 |--------|-------------------|
-| [Before you start](step-by-step.md#before-you-start) | Install tools, set up AWS CLI, IAM expectations, checklist |
+| [Before you start](step-by-step.md#before-you-start) | Install tools, IAM expectations, checklist |
 | [Step 1 — Start Splunk](step-by-step.md#step-1--start-splunk) | Run Splunk in Docker and sign in |
 | [Step 2 — Create Splunk indexes](step-by-step.md#step-2--create-splunk-indexes) | Create `aws_cloudtrail`, `aws_config`, `aws_vpcflow` |
 | [Step 3 — Install the Splunk Add-on for AWS](step-by-step.md#step-3--install-the-splunk-add-on-for-aws) | Install the add-on from Splunkbase |
@@ -13,5 +13,3 @@ The full lab walkthrough is in **[step-by-step.md](step-by-step.md)** (prerequis
 | [Step 6 — Run attack simulations (Stratus)](step-by-step.md#step-6--run-attack-simulations-stratus) | Configure Stratus and detonate techniques |
 | [Step 7 — Write detections and build dashboards](step-by-step.md#step-7--write-detections-and-build-dashboards) | SPL examples, dashboards, `detections/` folder |
 | [Teardown](step-by-step.md#teardown) | Run `destroy.sh`, empty buckets, destroy resources |
-
-**Before you start** subsections: [Tools to install](step-by-step.md#tools-to-install) · [AWS account](step-by-step.md#aws-account) · [IAM permissions](step-by-step.md#iam-permissions) · [Quick checklist](step-by-step.md#quick-checklist)

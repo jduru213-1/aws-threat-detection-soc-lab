@@ -14,27 +14,30 @@ Make sure you have everything below before running any commands.
 
 | Tool | Why |
 |------|-----|
-| **Docker Desktop** | Runs Splunk locally on your machine |
-| **Python 3.10+** | Runs the index setup script |
-| **AWS CLI** | Lets Terraform and `build.sh` talk to AWS |
-| **Terraform** | Provisions AWS resources (`build.sh` runs `terraform`) |
-| **Bash** | `build.sh` / `destroy.sh` are bash scripts (Git Bash works on Windows) |
+| [**Docker Desktop**](https://www.docker.com/products/docker-desktop/) | Runs Splunk locally on your machine |
+| [**Python 3.10+**](https://www.python.org/downloads/) | Runs the index setup script |
+| **Bash** ([**Git for Windows**](https://git-scm.com/download/win) includes Git Bash) | `build.sh` / `destroy.sh` are bash scripts (Git Bash works on Windows) |
 
 ### AWS account
 
 Use a **personal or sandbox** AWS account, not production.
 
-You do not need to run `aws configure` before Step 4. **`build.sh`** checks for the AWS CLI (and can help install it), then picks up credentials from the environment, `.env.soc-lab-admin`, the `soc-lab-admin` profile, or prompts you and saves keys there.
+You do not need to run `aws configure` before Step 4, and you do not need to install the **AWS CLI** or **Terraform** yourself first. **`build.sh`** checks for both (and can help install them), then picks up credentials from the environment, `.env.soc-lab-admin`, the `soc-lab-admin` profile, or prompts you and saves keys there. After that it runs **`terraform`** to provision the stack.
+
+If you install either tool yourself, use the [AWS CLI install guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [Terraform install guide](https://developer.hashicorp.com/terraform/install).
 
 ### IAM permissions
 
-**Read this before Step 4.** The identity whose keys you use with **`build.sh`** must be allowed to create IAM users, S3 buckets, SQS queues, CloudTrail, AWS Config, VPC Flow Logs, and related resources. A **restricted IAM user** will fail mid-apply with **`AccessDenied`**. For this lab, **`AdministratorAccess`** in a **non-production account** is typical.
+**Read this before Step 4.**
+
+- The identity whose keys you use with **`build.sh`** must be allowed to create IAM users, S3 buckets, SQS queues, CloudTrail, AWS Config, VPC Flow Logs, and related resources.
+- A **restricted IAM user** will fail mid-apply with **`AccessDenied`**.
+- For this lab, **`AdministratorAccess`** in a **non-production account** is typical.
 
 ### Quick checklist
 
 - [ ] Docker Desktop is running
 - [ ] Python 3.10+ is installed
-- [ ] Terraform is installed (`build.sh` stops with an install hint if it is missing)
 - [ ] [IAM permissions](#iam-permissions) above reviewed before Step 4
 
 ---
@@ -101,7 +104,12 @@ The add-on lets Splunk ingest from AWS. Install it now; you **configure** it in 
 
 This step uses Terraform (via **`build.sh`**) to create resources in AWS: S3 buckets, SQS queues, CloudTrail, AWS Config, VPC Flow Logs, and the IAM users Splunk and Stratus need.
 
-**Note:** `build.sh` ensures the AWS CLI (and Terraform) are available and can help install the CLI if it is missing. It resolves AWS credentials from the environment, `.env.soc-lab-admin` at the repo root, the `soc-lab-admin` profile, or an interactive prompt that saves keys to that profile. Use access keys for an identity that can apply this stack (see README prerequisites).
+**Note:**
+
+- `build.sh` ensures the **AWS CLI** and **Terraform** are available and can help install either if they are missing.
+- It resolves AWS credentials from the environment, **`.env.soc-lab-admin`** at the repo root, the **`soc-lab-admin`** profile, or an interactive prompt that saves keys to that profile.
+- Use access keys for an identity that can apply this stack (see **Prerequisites** in the [repo README](../README.md)).
+- If you install either tool yourself, see [**Before you start** → **AWS account**](#aws-account) for manual install links.
 
 ```bash
 cd infra
@@ -183,7 +191,10 @@ stratus detonate <technique-id> --cleanup
 index=aws_cloudtrail eventName=CreateUser
 ```
 
-**Important:** Use the **Stratus** profile only for simulations. Switch back to your **build/admin** credentials before **`./destroy.sh`**.
+**Important**
+
+- Use the **Stratus** profile only for simulations.
+- Switch back to your **build/admin** credentials before **`./destroy.sh`**.
 
 ---
 
@@ -207,7 +218,10 @@ index=aws_cloudtrail eventName=AuthorizeSecurityGroupIngress
 index=aws_cloudtrail eventName=CreateAccessKey
 ```
 
-**Dashboards:** **Dashboards → Create New Dashboard** — add panels from saved searches (event counts over time, failed logins, IAM changes).
+**Dashboards**
+
+- Open **Dashboards → Create New Dashboard**.
+- Add panels from saved searches (for example event counts over time, failed logins, IAM changes).
 
 Share SPL you want to keep in [`detections/`](../detections/README.md).
 
@@ -224,8 +238,11 @@ cd infra
 ./destroy.sh
 ```
 
-Confirm with **`yes`**. The script empties S3 buckets first (required before deletion), then destroys resources. You may be asked whether to **keep** the Splunk and Stratus IAM users — **yes** is convenient if you will rebuild soon (avoids rotating keys).
+- Confirm with **`yes`** when prompted.
+- The script empties **S3 buckets** first (required before deletion), then destroys resources.
+- You may be asked whether to **keep** the Splunk and Stratus IAM users. Answering **yes** is convenient if you will rebuild soon (avoids rotating keys).
 
 **Success:** Terraform reports **Destroy complete!**; Cost Explorer should trend toward **near zero** for this stack.
 
-Run **`./destroy.sh --help`** for **`--keep-iam-users`** and **`--delete-iam-users`** to skip interactive prompts.
+- Run **`./destroy.sh --help`** to see **`--keep-iam-users`** and **`--delete-iam-users`**.
+- Use those flags when you want to skip the interactive IAM prompts.
