@@ -1,6 +1,6 @@
 # Guides
 
-The full lab walkthrough is in **[step-by-step.md](step-by-step.md)** (prerequisites through teardown, with checks and troubleshooting in each part). For a shorter quick start, use the [repo README](../README.md).
+**[step-by-step.md](step-by-step.md)** — full setup. **[README](../README.md)** — quick start.
 
 | Section | What you do there |
 |--------|-------------------|
