@@ -50,11 +50,7 @@ aws sts get-caller-identity
 
 ---
 
-## Phase 1 — One-time setup
-
-Do these steps once. After this phase your local environment and AWS infrastructure will be ready.
-
-### Step 1 — Start Splunk
+## Step 1 — Start Splunk
 
 Splunk is your local SIEM. It runs in Docker and is where you search logs and build detections.
 
@@ -76,7 +72,7 @@ You can change the password by creating a **`soc/.env`** file next to `docker-co
 
 ---
 
-### Step 2 — Create Splunk indexes
+## Step 2 — Create Splunk indexes
 
 Indexes are where Splunk stores data. This lab uses **three** indexes — one per AWS log source — so searches and detections stay isolated.
 
@@ -99,7 +95,7 @@ The script prompts for your Splunk password.
 
 ---
 
-### Step 3 — Install the Splunk Add-on for AWS
+## Step 3 — Install the Splunk Add-on for AWS
 
 The add-on lets Splunk ingest from AWS. Install it now; you **configure** it in **Step 5** after AWS infrastructure exists.
 
@@ -112,7 +108,7 @@ The add-on lets Splunk ingest from AWS. Install it now; you **configure** it in 
 
 ---
 
-### Step 4 — Build the AWS infrastructure
+## Step 4 — Build the AWS infrastructure
 
 This step uses Terraform (via **`build.sh`**) to create resources in AWS: S3 buckets, SQS queues, CloudTrail, AWS Config, VPC Flow Logs, and the IAM users Splunk and Stratus need.
 
@@ -142,7 +138,7 @@ You can retrieve values again with **`terraform output`** from the **`infra/`** 
 
 ---
 
-### Step 5 — Connect Splunk to AWS
+## Step 5 — Connect Splunk to AWS
 
 Wire Splunk to the queues Terraform created. When a new object lands in S3, SQS notifies Splunk; the add-on fetches and indexes it.
 
@@ -174,11 +170,7 @@ Repeat for `aws_config` and `aws_vpcflow`. First delivery can take a minute — 
 
 ---
 
-## Phase 2 — Per-session usage
-
-The steps below are things you **repeat** when using the lab, not one-time setup.
-
-### Step 6 — Run attack simulations (Stratus)
+## Step 6 — Run attack simulations (Stratus)
 
 Stratus Red Team generates realistic, safe AWS activity. Events show in CloudTrail within minutes and flow into Splunk.
 
@@ -204,7 +196,7 @@ index=aws_cloudtrail eventName=CreateUser
 
 ---
 
-### Step 7 — Write detections and build dashboards
+## Step 7 — Write detections and build dashboards
 
 Use ingested data to practice searches that would catch real attacker behaviour.
 

@@ -1,12 +1,11 @@
 # Guides
 
-Full lab setup: **[Step-by-step setup guide](step-by-step.md)** — phases, prerequisites, success checks, and troubleshooting per step.
+**[Step-by-step setup guide](step-by-step.md)** — prerequisites, numbered steps 1–7, success checks, troubleshooting, and teardown.
 
 | Section | Link |
 |---------|------|
-| Before you start | [Requirements & checklist](step-by-step.md#before-you-start) |
-| Phase 1 — one-time setup | [Steps 1–5](step-by-step.md#phase-1--one-time-setup) |
-| Phase 2 — per-session | [Steps 6–7](step-by-step.md#phase-2--per-session-usage) |
+| Before you start | [Tools, AWS, IAM, checklist](step-by-step.md#before-you-start) |
+| Steps 1–7 | [Start Splunk](step-by-step.md#step-1--start-splunk) through [detections / dashboards](step-by-step.md#step-7--write-detections-and-build-dashboards) |
 | Teardown | [Destroy the stack](step-by-step.md#teardown) |
 
 For a short overview, see the repo [README](../README.md).
