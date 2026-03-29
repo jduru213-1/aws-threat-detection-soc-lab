@@ -42,9 +42,6 @@ I originally built this lab to strengthen my understanding of cloud-based threat
 ---
 
 ### 🚀 Quick start
-
-> For a detailed walkthrough with troubleshooting tips, see [`guides/step-by-step.md`](guides/step-by-step.md).
-
 **Prerequisites**
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
